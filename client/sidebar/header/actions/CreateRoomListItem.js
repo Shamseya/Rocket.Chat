@@ -1,13 +1,15 @@
 import React from 'react';
 import { Icon, Box, Flex, Margins } from '@rocket.chat/fuselage';
 
+import PatientAdd from '../../../customIcons/PatientAdd';
+
 export default function CreateRoomListItem({ text, icon, action }) {
 	return <Flex.Container>
 		<Box is='li' onClick={action}>
 			<Flex.Container>
 				<Box is='label' className='rc-popover__label' style={{ width: '100%' }}>
 					<Flex.Item grow={0}>
-						<Box className='rc-popover__icon'><Icon name={icon} size={20}/></Box>
+						<Box className='rc-popover__icon'>{icon === 'discussion' ? <PatientAdd /> : <Icon name={icon} size={20}/>}</Box>
 					</Flex.Item>
 					<Margins inline='x8'>
 						<Flex.Item grow={1}>

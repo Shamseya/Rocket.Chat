@@ -15,7 +15,7 @@ Meteor.startup(function() {
 
 		MessageAction.addButton({
 			id: 'start-discussion',
-			icon: 'discussion',
+			icon: 'patient-add',
 			label: 'Discussion_start',
 			context: ['message', 'message-mobile'],
 			async action() {
