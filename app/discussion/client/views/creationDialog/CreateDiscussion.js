@@ -92,6 +92,13 @@ Template.CreateDiscussion.helpers({
 	nameSuggestion() {
 		return Template.instance().discussionName.get();
 	},
+	otherSelected() {
+		return Template.instance().otherSelected.get();
+	},
+	ophthalmologySelected() {
+		return Template.instance().ophthalmologySelected.get();
+	},
+
 });
 
 Template.CreateDiscussion.events({
@@ -105,6 +112,30 @@ Template.CreateDiscussion.events({
 		const { value } = e.target;
 		t.reply.set(value);
 	},
+	'input #ophthalmology-radio-button'(e,t) {
+		t.otherSelected.set(false);
+		t.ophthalmologySelected.set(true);
+	},
+	'input #other-radio-button'(e,t) {
+		t.otherSelected.set(true);
+		t.ophthalmologySelected.set(false);
+	},
+	'input #patientName'(e,t) {
+		t.patientName.set(e.target.value);
+	},
+	'input #patientID'(e,t) {
+		t.patientID.set(e.target.value);
+	},
+	'input #patientDateOfBirth'(e,t) {
+		t.patientDateOfBirth.set(e.target.value);
+	},
+	'input #referringDoctor'(e,t) {
+		t.referringDoctor.set(e.target.value);
+	},
+	'input #eye-radio-buttons'(e,t) {
+		t.eye.set(e.target.value);
+	},
+
 	async 'submit #create-discussion, click .js-save-discussion'(event, instance) {
 		event.preventDefault();
 		const parentChannel = instance.parentChannel.get();
@@ -154,6 +185,19 @@ Template.CreateDiscussion.onCreated(function() {
 
 	const roomName = room && roomTypes.getRoomName(room.t, room);
 	this.discussionName = new ReactiveVar(suggestName(msg && msg.msg));
+
+	this.ophthalmologySelected=new ReactiveVar(false);
+	this.otherSelected=new ReactiveVar(false);
+
+	this.patientName=new ReactiveVar('');
+	this.patientID=new ReactiveVar('');
+	this.patientDateOfBirth=new ReactiveVar('');
+	this.referringDoctor=new ReactiveVar('');
+	this.eye=new ReactiveVar('');
+
+	this.facilities = new ReactiveVar([{name: 'aname', link: 'alink'},{name: 'bname', link: 'blink'}])
+	this.selectedFacility = new ReactiveVar('')
+
 
 	this.pmid = msg && msg._id;
 

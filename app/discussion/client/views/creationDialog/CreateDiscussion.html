@@ -32,7 +32,7 @@
 						</label>
 					</div>
 				{{/unless}}
-				<div class="rc-switch">
+				<!-- <div class="rc-switch">
 					<label class="rc-switch__label" tabindex="-1">
 						<input type="checkbox" class="rc-switch__input" id="encrypted" name="encrypted" checked={{encrypted}}>
 						<span class="rc-switch__button">
@@ -42,7 +42,7 @@
 							{{_ "Encrypted"}}
 						</span>
 					</label>
-				</div>
+				</div> -->
 				<div class="create-channel__inputs">
 					<div class="rc-input">
 						<label class="rc-input__label">
@@ -65,7 +65,7 @@
 						endpoint='users.autocomplete'
 						field='username'
 						sort='username'
-						label="Invite_Users"
+						label="Specialist"
 						placeholder="Username_Placeholder"
 						name="users"
 						icon="at"
@@ -74,7 +74,7 @@
 						modifier=userModifier
 					}}
 					<div class="rc-input">
-						<label class="rc-input__label">
+						<!-- <label class="rc-input__label">
 							<div class="rc-input__title">{{_ "Discussion_first_message_title"}}</div>
 							<div class="rc-input__wrapper">
 								<textarea rows="5" {{messageDisable}} name="discussion_message" id="discussion_message" class="rc-input__element" placeholder="{{_ 'New_discussion_first_message'}}"
@@ -83,7 +83,78 @@
 							{{#if encrypted}}
 								<div class="rc-input__title">{{_ "Discussion_first_message_disabled_due_to_e2e"}}</div>
 							{{/if}}
+						</label> -->
+						<!-- Service Type Radio button -->
+						<label class="rc-input__label">
+							<div class="rc-input__title">Service Type</div>
+							<div class="rc-input__wrapper">
+								<input type="radio" id="ophthalmology-radio-button" name="service-type" value="ophthalmology">
+								<label for="ophthalmology-radio-button"> Ophthalmology</label>
+								<input type="radio" id="other-radio-button" name="service-type" value="other">
+								<label for="other-radio-button"> Other</label>
+							</div>
 						</label>
+						{{#if ophthalmologySelected}}
+						<!-- Patient name -->
+							<div class="rc-input">
+								<label class="rc-input__label">
+									<div class="rc-input__title">Patient Name</div>
+									<div class="rc-input__wrapper">
+										<input name="patientName" id="patientName" class="rc-input__element" placeholder="Patient Name" value="{{patientName}}"/>
+									</div>
+								</label>
+							</div>
+
+						<!-- Patient ID -->
+							<div class="rc-input">
+								<label class="rc-input__label">
+									<div class="rc-input__title">Patient ID</div>
+									<div class="rc-input__wrapper">
+										<input name="patientID" id="patientID" class="rc-input__element" placeholder="Patient ID" value="{{patientID}}"/>
+									</div>
+								</label>
+							</div>
+
+						<!-- Patient DOB -->
+							<div class="rc-input">
+								<label class="rc-input__label">
+									<div class="rc-input__title">Date Of Birth</div>
+									<div class="rc-input__wrapper">
+										<input name="patientDateOfBirth" type="date" id="patientDateOfBirth" class="rc-input__element" placeholder="Date Of Birth" value="{{patientDateOfBirth}}"/>
+									</div>
+								</label>
+							</div>
+
+						<!-- Referring DR -->
+							<div class="rc-input">
+								<label class="rc-input__label">
+									<div class="rc-input__title">Referring Doctor</div>
+									<div class="rc-input__wrapper">
+										<input name="referringDoctor" id="referringDoctor" class="rc-input__element" placeholder="Date Of Birth" value="{{referringDoctor}}"/>
+									</div>
+								</label>
+							</div>
+
+						<!-- Eye Radio Buttons -->
+							<label class="rc-input__label">
+								<div class="rc-input__title">Eye</div>
+								<div id="eye-radio-buttons" class="rc-input__wrapper">
+									<input type="radio" id="right-eye-radio-button" name="eye-radio-buttons" value="right">
+									<label for="right-eye-radio-button"> Right</label>
+									<input type="radio" id="left-eye-radio-button" name="eye-radio-buttons" value="left">
+									<label for="left-eye-radio-button"> Left</label>
+									<input type="radio" id="both-eyes-radio-button" name="eye-radio-buttons" value="both">
+									<label for="both-eyes-radio-button"> Both</label>
+								</div>
+							</label>
+
+						{{/if}}
+
+						{{#if otherSelected}}
+							<h1>otherSelected</h1>
+						{{/if}}
+
+
 					</div>
 				</div>
 			</form>
