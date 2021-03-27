@@ -32,17 +32,6 @@
 						</label>
 					</div>
 				{{/unless}}
-				<!-- <div class="rc-switch">
-					<label class="rc-switch__label" tabindex="-1">
-						<input type="checkbox" class="rc-switch__input" id="encrypted" name="encrypted" checked={{encrypted}}>
-						<span class="rc-switch__button">
-						<span class="rc-switch__button-inside"></span>
-					</span>
-						<span class="rc-switch__text">
-							{{_ "Encrypted"}}
-						</span>
-					</label>
-				</div> -->
 				<div class="create-channel__inputs">
 					<div class="rc-input">
 						<label class="rc-input__label">
@@ -73,89 +62,197 @@
 						templateItem="popupList_item_default"
 						modifier=userModifier
 					}}
+					<!-- Patient name -->
 					<div class="rc-input">
-						<!-- <label class="rc-input__label">
-							<div class="rc-input__title">{{_ "Discussion_first_message_title"}}</div>
+						<label class="rc-input__label">
+							<div class="rc-input__title">Patient Name</div>
 							<div class="rc-input__wrapper">
-								<textarea rows="5" {{messageDisable}} name="discussion_message" id="discussion_message" class="rc-input__element" placeholder="{{_ 'New_discussion_first_message'}}"
-									maxlength="{{maxMessageLength}}"></textarea>
+								<input name="patientName" id="patientName" class="rc-input__element" placeholder="Patient Name" value="{{patientName}}"/>
 							</div>
-							{{#if encrypted}}
-								<div class="rc-input__title">{{_ "Discussion_first_message_disabled_due_to_e2e"}}</div>
-							{{/if}}
-						</label> -->
-						<!-- Service Type Radio button -->
+						</label>
+					</div>
+
+				<!-- Patient ID -->
+					<div class="rc-input">
+						<label class="rc-input__label">
+							<div class="rc-input__title">Patient ID</div>
+							<div class="rc-input__wrapper">
+								<input name="patientID" id="patientID" class="rc-input__element" placeholder="Patient ID" value="{{patientID}}"/>
+							</div>
+						</label>
+					</div>
+
+				<!-- Patient DOB -->
+					<div class="rc-input">
+						<label class="rc-input__label">
+							<div class="rc-input__title">Date Of Birth</div>
+							<div class="rc-input__wrapper">
+								<input name="patientDateOfBirth" type="date" id="patientDateOfBirth" class="rc-input__element" placeholder="Date Of Birth" value="{{patientDateOfBirth}}"/>
+							</div>
+						</label>
+					</div>
+
+					<!-- Service Type Radio button -->
+					<div class="rc-input">
 						<label class="rc-input__label">
 							<div class="rc-input__title">Service Type</div>
-							<div class="rc-input__wrapper">
-								<input type="radio" id="ophthalmology-radio-button" name="service-type" value="ophthalmology">
+							<div  id="service-type-radio-buttons" class="rc-input__wrapper">
+								<input type="radio" id="ophthalmology-radio-button" name="service-type" value="ophthalmology" checked="{{ophthalmologySelected}}">
 								<label for="ophthalmology-radio-button"> Ophthalmology</label>
-								<input type="radio" id="other-radio-button" name="service-type" value="other">
+								<input type="radio" id="other-radio-button" name="service-type" value="other" checked="{{otherSelected}}">
 								<label for="other-radio-button"> Other</label>
 							</div>
 						</label>
+					</div>
+
 						{{#if ophthalmologySelected}}
-						<!-- Patient name -->
-							<div class="rc-input">
-								<label class="rc-input__label">
-									<div class="rc-input__title">Patient Name</div>
-									<div class="rc-input__wrapper">
-										<input name="patientName" id="patientName" class="rc-input__element" placeholder="Patient Name" value="{{patientName}}"/>
-									</div>
-								</label>
-							</div>
-
-						<!-- Patient ID -->
-							<div class="rc-input">
-								<label class="rc-input__label">
-									<div class="rc-input__title">Patient ID</div>
-									<div class="rc-input__wrapper">
-										<input name="patientID" id="patientID" class="rc-input__element" placeholder="Patient ID" value="{{patientID}}"/>
-									</div>
-								</label>
-							</div>
-
-						<!-- Patient DOB -->
-							<div class="rc-input">
-								<label class="rc-input__label">
-									<div class="rc-input__title">Date Of Birth</div>
-									<div class="rc-input__wrapper">
-										<input name="patientDateOfBirth" type="date" id="patientDateOfBirth" class="rc-input__element" placeholder="Date Of Birth" value="{{patientDateOfBirth}}"/>
-									</div>
-								</label>
-							</div>
-
+			
 						<!-- Referring DR -->
 							<div class="rc-input">
 								<label class="rc-input__label">
 									<div class="rc-input__title">Referring Doctor</div>
 									<div class="rc-input__wrapper">
-										<input name="referringDoctor" id="referringDoctor" class="rc-input__element" placeholder="Date Of Birth" value="{{referringDoctor}}"/>
+										<input name="referringDoctor" id="referring-doctor" class="rc-input__element" placeholder="Referring Doctor" value="{{referringDoctor}}"/>
 									</div>
 								</label>
 							</div>
 
 						<!-- Eye Radio Buttons -->
-							<label class="rc-input__label">
-								<div class="rc-input__title">Eye</div>
-								<div id="eye-radio-buttons" class="rc-input__wrapper">
-									<input type="radio" id="right-eye-radio-button" name="eye-radio-buttons" value="right">
-									<label for="right-eye-radio-button"> Right</label>
-									<input type="radio" id="left-eye-radio-button" name="eye-radio-buttons" value="left">
-									<label for="left-eye-radio-button"> Left</label>
-									<input type="radio" id="both-eyes-radio-button" name="eye-radio-buttons" value="both">
-									<label for="both-eyes-radio-button"> Both</label>
-								</div>
-							</label>
+							<div class="rc-input">
+								<label class="rc-input__label">
+									<div class="rc-input__title">Eye</div>
+									<div id="eye-radio-buttons" class="rc-input__wrapper">
+										<input type="radio" id="right-eye-radio-button" name="eye-radio-buttons" value="right" checked="{{isRightEye}}">
+										<label for="right-eye-radio-button"> Right</label>
+										<input type="radio" id="left-eye-radio-button" name="eye-radio-buttons" value="left" checked="{{isLeftEye}}">
+										<label for="left-eye-radio-button"> Left</label>
+										<input type="radio" id="both-eyes-radio-button" name="eye-radio-buttons" value="both" checked="{{isBothEyes}}">
+										<label for="both-eyes-radio-button"> Both</label>
+									</div>
+								</label>
+							</div>
 
+						<!-- Facility Select -->
+							<div class="rc-input" >
+								<label class="rc-input__label">
+									<div class="rc-input__title">Select a facility</div>
+									<div class="rc-input__wrapper">
+										<input class="rc-input__element" placeholder="Seletct An Investigation" style="cursor:pointer; background-color: white;" disabled="true" value="{{selectedFacility.name}}"/>
+										<select id="facility-select" class="rc-input__element" style="opacity: 0; position: relative; top: -40px">
+											<option value="" disabled selected style="display:none;">Select a facility</option>
+											{{#each allFacilities}}
+												<option value="{{this.name}}">{{this.name}}</option>
+											{{/each}}
+										</select>
+									</div>
+								</label>
+							</div>
+
+
+							<!-- Investigation Select -->
+							<div class="rc-input" style="margin-top: -40px;">
+								<label class="rc-input__label">
+									<div class="rc-input__title" >Select an Investigation</div>
+									<div class="rc-input__wrapper">
+										<input class="rc-input__element" placeholder="Seletct An Investigation" style="cursor:pointer; background-color: white;" disabled="true" value="{{selectedInvestigation.name}}"/>
+										<select id="investigation-select" class="rc-input__element" style="opacity: 0; position: relative; top: -40px">
+											<option value="" disabled selected style="display:none;">Select an Investigation</option>
+											{{#each allInvestigations}}
+												<option value="{{this.name}}">{{this.name}}</option>
+											{{/each}}
+										</select>
+									</div>
+								</label>
+							</div>
+
+							<!-- Facility must be selected before setting zoom room and anydesk   -->
+							{{#if selectedFacility}}
+								<!-- Zoom Room Type -->
+								<div class="rc-input" style="margin-top: -40px;">
+									<label class="rc-input__label">
+										<div class="rc-input__title">Zoom Room Type</div>
+										<div id="zoom-room-radio-buttons" class="rc-input__wrapper">
+											<input type="radio" id="standard-zoom-room-radio-button" name="xoom-room-type" value="standard" checked="{{standardZoomRoomSelected}}">
+											<label for="standard-zoom-room-radio-button"> Standard</label>
+											<input type="radio" id="custom-zoom-room-radio-button" name="xoom-room-type" value="custom" checked="{{customZoomRoomSelected}}">
+											<label for="custom-zoom-room-radio-button"> Custom</label>
+										</div>
+									</label>
+								</div>
+
+								<!-- Zoom Room Data -->
+								{{#if customZoomRoomSelected}}
+									<div class="rc-input">
+										<label class="rc-input__label">
+											<div class="rc-input__title">Custom Zoom Room</div>
+											<div class="rc-input__wrapper">
+												<input name="customZoomRoomLink" id="custom-zoom-room-link" class="rc-input__element" placeholder="Type your zoom link here" value="{{customZoomRoomLink}}"/>
+											</div>
+										</label>
+									</div>
+								{{/if}}
+
+								{{#if standardZoomRoomSelected}}
+									<div class="rc-input">
+										<label class="rc-input__label">
+											<div class="rc-input__title">Custom Zoom Room</div>
+											<div class="rc-input__wrapper">
+												<input name="automaticZoomRoomLink" id="automatic-zoom-room-link" class="rc-input__element" disabled="true" value="{{selectedFacility.zoomLink}}"/>
+											</div>
+										</label>
+									</div>
+								{{/if}}
+
+								<!-- Investigation must be selected before setting anydesk -->
+								{{#if selectedInvestigation}}
+									<!-- AnyDesk Device -->
+									<div class="rc-input">
+										<label class="rc-input__label">
+											<div class="rc-input__title">AnyDesk Device</div>
+											<div id="anydesk-device-type-radio-buttons" class="rc-input__wrapper">
+												<input type="radio" id="automatic-anydesk-device-radio-button" name="anydesk-device-type" value="automatic" checked="{{automaticAnydeskDeviceSelected}}">
+												<label for="automatic-anydesk-device-radio-button"> Automatic</label>
+												<input type="radio" id="custom-anydesk-device-radio-button" name="anydesk-device-type" value="custom" checked="{{customAnydeskDeviceSelected}}">
+												<label for="custom-anydesk-device-radio-button"> Custom</label>
+											</div>
+										</label>
+									</div>
+									<!-- AnyDesk Device Data -->
+									{{#if customAnydeskDeviceSelected}}
+										<div class="rc-input">
+											<label class="rc-input__label">
+												<div class="rc-input__title">Custom Anydesk Device Name</div>
+												<div class="rc-input__wrapper">
+													<input name="customZoomRoomLink" id="custom-anydesk-device-name" class="rc-input__element"  placeholder="Type you anydesk device name here"  value="{{customAnydeskDeviceName}}"/>
+												</div>
+											</label>
+										</div>
+									{{/if}}
+
+									{{#if automaticAnydeskDeviceSelected}}
+										<div class="rc-input">
+											<label class="rc-input__label">
+												<div class="rc-input__title">Automatic Anydesk Device Name</div>
+												<div class="rc-input__wrapper">
+													<input name="customZoomRoomLink" id="automatic-anydesk-device-name" class="rc-input__element" disabled="true" value="{{automaticAnydeskDeviceName}}"/>
+												</div>
+											</label>
+										</div>
+									{{/if}}
+								{{/if}}
+							{{/if}}
 						{{/if}}
 
 						{{#if otherSelected}}
-							<h1>otherSelected</h1>
+						<div class="rc-input">
+							<label class="rc-input__label">
+								<div class="rc-input__title">Investigation</div>
+								<div class="rc-input__wrapper">
+									<input name="otherServiceTypeInvestigation" id="other-service-type-investigation" class="rc-input__element"  placeholder="Type you Investigation here"  value="{{otherServiceTypeInvestigation}}"/>
+								</div>
+							</label>
+						</div>						
 						{{/if}}
-
-
-					</div>
 				</div>
 			</form>
 			<div class="rc-input">

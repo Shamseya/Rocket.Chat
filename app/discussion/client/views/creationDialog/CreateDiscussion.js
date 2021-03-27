@@ -12,6 +12,10 @@ import { call } from '../../../../ui-utils/client';
 import { AutoComplete } from '../../../../meteor-autocomplete/client';
 
 import './CreateDiscussion.html';
+import { allFacilities } from './AllFacilities';
+import { allInvestigations } from './AllInvestigations';
+import { allDevices } from './AllDevices';
+
 
 Template.CreateDiscussion.helpers({
 	encrypted() {
@@ -36,8 +40,60 @@ Template.CreateDiscussion.helpers({
 		return parentChannel && `${ TAPi18n.__('Discussion_target_channel_prefix') } "${ parentChannel }"`;
 	},
 	createIsDisabled() {
-		const { parentChannel, discussionName } = Template.instance();
-		return parentChannel.get() && discussionName.get().trim() ? '' : 'disabled';
+		const { parentChannel, discussionName, 
+			patientName, patientID, patientDateOfBirth, 
+			serviceType, 
+			otherServiceTypeInvestigation,
+			referringDoctor, eye, selectedFacility, selectedInvestigation, 
+			zoomRoomType, 
+			customZoomRoomLink, 
+			anydeskDeviceType, 
+			customAnydeskDeviceName,
+			selectedUsers
+		} = Template.instance();
+		if (!parentChannel.get() || !discussionName.get().trim() || !selectedUsers.get().length) return 'disabled';
+		// Basic Custom Data
+		if (!patientName.get().trim() || !patientID.get().trim() || !patientDateOfBirth.get().trim()) return 'disabled';
+
+
+		////// Serice Type not set
+		if(!serviceType.get()) return 'disabled';
+
+		// Service Type is other && custom Innvestigation => Correct
+		if (serviceType.get() === "other") {
+			if(otherServiceTypeInvestigation.get().trim()) {
+				return '';
+			} else {
+				return 'disabled';
+			}
+		}
+		////// Service Type is ophthalmology
+		// Basic ophthalmology fields
+		if(!referringDoctor.get().trim() || !eye.get().trim() || !selectedFacility.get() || !selectedInvestigation.get()) return 'disabled';
+
+		//// Zoon Room type is set
+		if(!zoomRoomType.get()) return 'disabled';
+		// Zoom room type is standard, facility's zoomlink
+		if(zoomRoomType.get().trim() === "standard" && !selectedFacility.get().zoomLink?.trim()) return 'disabled';
+		// Zoom room type is custom, custom zoomlink
+		if(zoomRoomType.get().trim() === "custom" && !customZoomRoomLink.get()?.trim()) return 'disabled';
+
+		//// Anydesk device type is set
+		if(!anydeskDeviceType.get()) return 'disabled';
+		// Anydesk device type is automatic, facility's & investigation anydesk device name
+		if(anydeskDeviceType.get().trim() === "automatic") {
+			let automaticAnyDesk = Template.instance().devices.get().find
+		(
+			device => device.facilityName === Template.instance().selectedFacility.get()?.name &&
+			device.investigation === Template.instance().selectedInvestigation.get()?.name
+		)
+			if(!automaticAnyDesk?.anydeskDeviceName) return 'disabled';
+		}
+		// Anydesk device type is custom, custom anudesk device name
+		if(anydeskDeviceType.get().trim() === "custom" && !customAnydeskDeviceName.get().trim()) return 'disabled';
+
+		// // All pass => Correct
+		return '';
 	},
 	parentChannel() {
 		const instance = Template.instance();
@@ -93,12 +149,70 @@ Template.CreateDiscussion.helpers({
 		return Template.instance().discussionName.get();
 	},
 	otherSelected() {
-		return Template.instance().otherSelected.get();
+		return Template.instance().serviceType.get() === "other";
 	},
 	ophthalmologySelected() {
-		return Template.instance().ophthalmologySelected.get();
+		return Template.instance().serviceType.get() === "ophthalmology";
 	},
-
+	referringDoctor() {
+		return Template.instance().referringDoctor.get();
+	},
+	isLeftEye() {
+		return Template.instance().eye.get() === "left";		
+	},
+	isRightEye() {
+		return Template.instance().eye.get() === "right";		
+	},
+	isBothEyes() {
+		return Template.instance().eye.get() === "both";		
+	},
+	allFacilities() {
+		return Template.instance().facilities.get();
+	},
+	selectedFacility() {
+		return Template.instance().selectedFacility.get();
+	},
+	allInvestigations() {
+		return Template.instance().investigations.get();
+	},
+	selectedInvestigation() {
+		return Template.instance().selectedInvestigation.get();
+	},
+	allDevices() {
+		return Template.instance().devices.get();
+	},
+	selectedDevice() {
+		return Template.instance().selectedDevice.get();
+	},
+	standardZoomRoomSelected() {
+		return Template.instance().zoomRoomType.get() === "standard";
+	},
+	customZoomRoomSelected() {
+		return Template.instance().zoomRoomType.get() === "custom";
+	},
+	customZoomRoomLink() {
+		return Template.instance().customZoomRoomLink.get();
+	},
+	automaticAnydeskDeviceSelected() {
+		return Template.instance().anydeskDeviceType.get() === "automatic";
+	},
+	customAnydeskDeviceSelected() {
+		return Template.instance().anydeskDeviceType.get() === "custom";
+	},
+	customAnydeskDeviceName() {
+		return Template.instance().customAnydeskDeviceName.get();
+	},
+	automaticAnydeskDeviceName() {
+		let automaticAnyDesk = Template.instance().devices.get().find
+		(
+			device => device.facilityName === Template.instance().selectedFacility.get().name &&
+			device.investigation === Template.instance().selectedInvestigation.get().name
+		)
+		return automaticAnyDesk?.anydeskDeviceName;
+	},
+	otherServiceTypeInvestigation() {
+		return Template.instance().otherServiceTypeInvestigation.get()
+	}
 });
 
 Template.CreateDiscussion.events({
@@ -112,13 +226,8 @@ Template.CreateDiscussion.events({
 		const { value } = e.target;
 		t.reply.set(value);
 	},
-	'input #ophthalmology-radio-button'(e,t) {
-		t.otherSelected.set(false);
-		t.ophthalmologySelected.set(true);
-	},
-	'input #other-radio-button'(e,t) {
-		t.otherSelected.set(true);
-		t.ophthalmologySelected.set(false);
+	'input #service-type-radio-buttons'(e,t) {
+		t.serviceType.set(e.target.value);
 	},
 	'input #patientName'(e,t) {
 		t.patientName.set(e.target.value);
@@ -129,14 +238,43 @@ Template.CreateDiscussion.events({
 	'input #patientDateOfBirth'(e,t) {
 		t.patientDateOfBirth.set(e.target.value);
 	},
-	'input #referringDoctor'(e,t) {
+	'input #referring-doctor'(e,t) {
 		t.referringDoctor.set(e.target.value);
 	},
 	'input #eye-radio-buttons'(e,t) {
 		t.eye.set(e.target.value);
 	},
+	'input #facility-select'(e,t) {
+		t.selectedFacility.set(t.facilities.curValue.find(facility => facility.name === e.target.value));
+	},
+	'input #investigation-select'(e,t) {
+		t.selectedInvestigation.set(t.investigations.curValue.find(investigation => investigation.name === e.target.value));
+	},
+	'input #device-select'(e,t) {
+		t.selectedDevice.set(t.devices.curValue.find(device => investigation.anydeskDeviceName === e.target.value));
+	},
+
+	'input #zoom-room-radio-buttons'(e,t) {
+		t.zoomRoomType.set(e.target.value);
+	},
+	'input #custom-zoom-room-link'(e,t) {
+		t.customZoomRoomLink.set(e.target.value);
+	},
+
+	'input #anydesk-device-type-radio-buttons'(e,t) {
+		t.anydeskDeviceType.set(e.target.value);
+	},
+
+	'input #custom-anydesk-device-name'(e,t) {
+		t.customAnydeskDeviceName.set(e.target.value);
+	},
+
+	'input #other-service-type-investigation'(e,t) {
+		t.otherServiceTypeInvestigation.set(e.target.value);
+	},
 
 	async 'submit #create-discussion, click .js-save-discussion'(event, instance) {
+
 		event.preventDefault();
 		const parentChannel = instance.parentChannel.get();
 
@@ -148,11 +286,14 @@ Template.CreateDiscussion.events({
 		const prid = instance.parentChannelId.get();
 		const reply = encrypted ? undefined : instance.reply.get();
 
+		const patientName = instance.patientName.get();
+		
+
 		if (!prid) {
 			const errorText = TAPi18n.__('Invalid_room_name', `${ parentChannel }...`);
 			return toastr.error(errorText);
 		}
-		const result = await call('createDiscussion', { prid, pmid, t_name, users, encrypted, reply });
+		const result = await call('createDiscussion', { prid, pmid, t_name, users, encrypted, reply, patientName });
 
 		// callback to enable tracking
 		callbacks.run('afterDiscussion', Meteor.user(), result);
@@ -171,6 +312,7 @@ Template.CreateDiscussion.onRendered(function() {
 
 const suggestName = (msg = '') => msg.substr(0, 140);
 
+
 Template.CreateDiscussion.onCreated(function() {
 	const { rid, message: msg } = this.data;
 
@@ -186,18 +328,28 @@ Template.CreateDiscussion.onCreated(function() {
 	const roomName = room && roomTypes.getRoomName(room.t, room);
 	this.discussionName = new ReactiveVar(suggestName(msg && msg.msg));
 
-	this.ophthalmologySelected=new ReactiveVar(false);
-	this.otherSelected=new ReactiveVar(false);
+	this.serviceType =new ReactiveVar(null)
 
-	this.patientName=new ReactiveVar('');
-	this.patientID=new ReactiveVar('');
-	this.patientDateOfBirth=new ReactiveVar('');
-	this.referringDoctor=new ReactiveVar('');
-	this.eye=new ReactiveVar('');
+	this.patientName = new ReactiveVar('');
+	this.patientID = new ReactiveVar('');
+	this.patientDateOfBirth = new ReactiveVar('');
+	this.referringDoctor = new ReactiveVar('');
+	this.eye = new ReactiveVar('');
 
-	this.facilities = new ReactiveVar([{name: 'aname', link: 'alink'},{name: 'bname', link: 'blink'}])
-	this.selectedFacility = new ReactiveVar('')
+	this.facilities = new ReactiveVar(allFacilities)
+	this.selectedFacility = new ReactiveVar(null)
+	this.investigations = new ReactiveVar(allInvestigations)
+	this.selectedInvestigation = new ReactiveVar(null)
+	this.devices = new ReactiveVar(allDevices)
+	this.selectedDevice = new ReactiveVar(null)
 
+	this.zoomRoomType=new ReactiveVar(null);
+	this.customZoomRoomLink=new ReactiveVar('');
+
+	this.anydeskDeviceType=new ReactiveVar(null);
+	this.customAnydeskDeviceName=new ReactiveVar('');
+
+	this.otherServiceTypeInvestigation = new ReactiveVar('')
 
 	this.pmid = msg && msg._id;
 
@@ -209,9 +361,7 @@ Template.CreateDiscussion.onCreated(function() {
 
 	this.reply = new ReactiveVar('');
 
-
 	this.selectedRoom = new ReactiveVar(room ? [room] : []);
-
 
 	this.onClickTagRoom = () => {
 		this.selectedRoom.set([]);

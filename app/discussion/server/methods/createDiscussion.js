@@ -149,7 +149,9 @@ Meteor.methods({
 	* @param {string[]} users - users to be added
 	* @param {boolean} encrypted - if the discussion's e2e encryption should be enabled.
 	*/
-	createDiscussion({ prid, pmid, t_name, reply, users, encrypted }) {
+	createDiscussion({ prid, pmid, t_name, reply, users, encrypted, patientName }) {
+		console.log('in createDiscussion.js')
+		console.log(patientName)
 		if (!settings.get('Discussion_enabled')) {
 			throw new Meteor.Error('error-action-not-allowed', 'You are not allowed to create a discussion', { method: 'createDiscussion' });
 		}
