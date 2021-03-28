@@ -286,14 +286,52 @@ Template.CreateDiscussion.events({
 		const prid = instance.parentChannelId.get();
 		const reply = encrypted ? undefined : instance.reply.get();
 
-		const patientName = instance.patientName.get();
+		const {patientName, patientID, patientDateOfBirth, serviceType } = instance;
+		const data = {};
+		data.patientName= patientName.get();
+		data.patientID= patientID.get();
+		data.patientDateOfBirth= patientDateOfBirth.get();
+		data.serviceType= serviceType.get();
+		if(serviceType === 'other') {
+			data.otherServiceTypeInvestigation = instance.otherServiceTypeInvestigation.get();
+		}
+		else {
+			const {referringDoctor, eye, selectedFacility, selectedInvestigation, zoomRoomType, anydeskDeviceType } = instance;
+			data.referringDoctor = referringDoctor.get();
+			data.eye = eye.get();
+			data.selectedFacility = selectedFacility.get();
+			data.selectedInvestigation = selectedInvestigation.get();
+			data.zoomRoomType = zoomRoomType.get();
+			data.anydeskDeviceType = anydeskDeviceType.get();
+			if(zoomRoomType === "standard") {
+				data.zoomRoomLink = instance.selectedFacility.get().zoomLink;
+			}
+			else {
+				data.zoomRoomLink = instance.customZoomRoomLink.get();
+			}
+
+			if(anydeskDeviceType === "automatic") {
+				let automaticAnyDesk = instance.devices.get().find
+				(
+					device => device.facilityName === instance.selectedFacility.get().name &&
+					device.investigation === instance.selectedInvestigation.get().name
+				)
+				data.anydeskDeviceName = automaticAnyDesk.anydeskDeviceName;
+			}
+			else {
+				data.anydeskDeviceName = instance.customAnydeskDeviceName.get();
+
+			}
+		}
+		console.log('creating a patient with these data')
+		console.log(data);
 		
 
 		if (!prid) {
 			const errorText = TAPi18n.__('Invalid_room_name', `${ parentChannel }...`);
 			return toastr.error(errorText);
 		}
-		const result = await call('createDiscussion', { prid, pmid, t_name, users, encrypted, reply, patientName });
+		const result = await call('createDiscussion', { prid, pmid, t_name, users, encrypted, reply, data });
 
 		// callback to enable tracking
 		callbacks.run('afterDiscussion', Meteor.user(), result);

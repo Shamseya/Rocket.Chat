@@ -235,7 +235,7 @@ API.v1.addRoute('rooms.leave', { authRequired: true }, {
 API.v1.addRoute('rooms.createDiscussion', { authRequired: true }, {
 	post() {
 		console.log(this.bodyparams)
-		const { prid, pmid, reply, t_name, users, encrypted, patientName } = this.bodyParams;
+		const { prid, pmid, reply, t_name, users, encrypted, data } = this.bodyParams;
 		console.log(patientName)
 		if (!prid) {
 			return API.v1.failure('Body parameter "prid" is required.');
@@ -246,11 +246,14 @@ API.v1.addRoute('rooms.createDiscussion', { authRequired: true }, {
 		if (users && !Array.isArray(users)) {
 			return API.v1.failure('Body parameter "users" must be an array.');
 		}
-
+		
 		if (encrypted !== undefined && typeof encrypted !== 'boolean') {
 			return API.v1.failure('Body parameter "encrypted" must be a boolean when included.');
 		}
-
+		if (!data) {
+			return API.v1.failure('Missing parameter "data" must be a json object');
+		}
+		
 		const discussion = Meteor.runAsUser(this.userId, () => Meteor.call('createDiscussion', {
 			prid,
 			pmid,
@@ -258,7 +261,7 @@ API.v1.addRoute('rooms.createDiscussion', { authRequired: true }, {
 			reply,
 			users: users || [],
 			encrypted,
-			patientName
+			data
 		}));
 
 		return API.v1.success({ discussion });

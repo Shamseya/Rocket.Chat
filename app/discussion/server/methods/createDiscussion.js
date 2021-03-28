@@ -37,7 +37,7 @@ const mentionMessage = (rid, { _id, username, name }, message_embedded) => {
 	return Messages.insert(welcomeMessage);
 };
 
-const create = ({ prid, pmid, t_name, reply, users, user, encrypted }) => {
+const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => {
 	// if you set both, prid and pmid, and the rooms doesnt match... should throw an error)
 	let message = false;
 	if (pmid) {
@@ -98,6 +98,72 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted }) => {
 		}
 	}
 
+
+	/// Patient Data Validation
+
+	if(!data) {
+		throw new Meteor.Error('error-invalid-arguments', 'Patient data is missing.', {
+			method: 'DiscussionCreation',
+		});
+	}
+	const { parentChannel, discussionName, 
+		patientName, patientID, patientDateOfBirth, 
+		serviceType, 
+		otherServiceTypeInvestigation,
+		referringDoctor, eye, selectedFacility, selectedInvestigation, 
+		zoomRoomType, 
+		customZoomRoomLink, 
+		anydeskDeviceType, 
+		customAnydeskDeviceName,
+		selectedUsers
+	} = data;
+
+	if (!selectedUsers.length) 
+	throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Specialist/Conultant .', {
+		method: 'DiscussionCreation',
+	});
+
+	if (!patientName.trim() || !patientID.trim() || !patientDateOfBirth.trim()) 
+		throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Patient name/id/DOB.', {
+			method: 'DiscussionCreation',
+		});
+		if(!serviceType) 
+			throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Service type.', {
+				method: 'DiscussionCreation',
+			});
+
+		if (serviceType === "other" && !otherServiceTypeInvestigation.trim()) 
+			throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter otherServiceTypeInvestigation Not specified for service type other.', {
+				method: 'DiscussionCreation',
+			});
+		
+		if(serviceType === "ophthalmology") {
+			if(!referringDoctor.trim() || !eye.trim() || !selectedFacility || !selectedInvestigation) 
+				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter referringDoctor/eye/selectedFacility/selectedInvestigation', {
+					method: 'DiscussionCreation',
+				});
+			if(!zoomRoomType.trim()) 
+				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter zoomRoomType', {
+					method: 'DiscussionCreation',
+				});
+			if(!zoomRoomLink.trim()) 
+				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter zoomRoomLink', {
+					method: 'DiscussionCreation',
+				});
+			if(!anydeskDeviceType.trim()) 
+				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter anydeskDeviceType', {
+					method: 'DiscussionCreation',
+				});
+
+			if( !customAnydeskDeviceName.trim()) 
+				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter customAnydeskDeviceName', {
+					method: 'DiscussionCreation',
+				});
+		}
+
+	/// End Patient Data Validation
+
+
 	const name = Random.id();
 
 	// auto invite the replied message owner
@@ -149,9 +215,9 @@ Meteor.methods({
 	* @param {string[]} users - users to be added
 	* @param {boolean} encrypted - if the discussion's e2e encryption should be enabled.
 	*/
-	createDiscussion({ prid, pmid, t_name, reply, users, encrypted, patientName }) {
-		console.log('in createDiscussion.js')
-		console.log(patientName)
+	createDiscussion({ prid, pmid, t_name, reply, users, encrypted, data }) {
+		console.log('in server => createDiscussion.js')
+		console.log(data)
 		if (!settings.get('Discussion_enabled')) {
 			throw new Meteor.Error('error-action-not-allowed', 'You are not allowed to create a discussion', { method: 'createDiscussion' });
 		}
@@ -165,6 +231,6 @@ Meteor.methods({
 			throw new Meteor.Error('error-action-not-allowed', 'You are not allowed to create a discussion', { method: 'createDiscussion' });
 		}
 
-		return create({ uid, prid, pmid, t_name, reply, users, user: Meteor.user(), encrypted });
+		return create({ uid, prid, pmid, t_name, reply, users, user: Meteor.user(), encrypted, data });
 	},
 });
