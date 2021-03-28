@@ -9,7 +9,7 @@ Meteor.startup(function() {
 		message: 'discussion-created',
 		data(message) {
 			return {
-				message: `<svg class="rc-icon" aria-hidden="true"><use xlink:href="#icon-discussion"></use></svg> ${ message.msg }`,
+				message: `<svg class="rc-icon" aria-hidden="true"><use xlink:href="#icon-patient-add"></use></svg> ${ message.msg }`,
 			};
 		},
 	});

@@ -12,7 +12,7 @@ Meteor.startup(function() {
 		}
 		messageBox.actions.add('Create_new', 'Discussion', {
 			id: 'start-discussion',
-			icon: 'discussion',
+			icon: 'patient-add',
 			condition: () => true,
 			action(data) {
 				modal.open({
