@@ -6,14 +6,17 @@ import { useTranslation } from '../contexts/TranslationContext';
 import { useUserPreference } from '../contexts/UserContext';
 import { useMethod } from '../contexts/ServerContext';
 import { useSetting } from '../contexts/SettingsContext';
+import PatientAdd from '../customIcons/PatientAdd';
 
-function SortListItem({ text, icon, input }) {
+function SortListItem({ text, icon, input, iconIsComponent }) {
 	return <Flex.Container>
 		<Box is='li'>
 			<Flex.Container>
 				<Box is='label' className='rc-popover__label' style={{ width: '100%' }}>
 					<Flex.Item grow={0}>
-						<Box className='rc-popover__icon'><Icon name={icon} size={20}/></Box>
+						<Box className='rc-popover__icon'>
+						 { iconIsComponent ? icon : <Icon name={icon} size={20}/> } 
+						 </Box>
 					</Flex.Item>
 					<Margins inline='x8'>
 						<Flex.Item grow={1}>
@@ -125,7 +128,7 @@ function GroupingList() {
 		</Margins>
 		<ul className='rc-popover__list'>
 			<Margins block='x8'>
-				{isDiscussionEnabled && <SortListItem icon={'discussion'} text={t('Discussions')} input={<CheckBox onChange={handleChangeShowDicussion} name='sidebarShowDiscussion' checked={sidebarShowDiscussion} />} />}
+				{isDiscussionEnabled && <SortListItem iconIsComponent = {true} icon={<PatientAdd />} text={t('Discussions')} input={<CheckBox onChange={handleChangeShowDicussion} name='sidebarShowDiscussion' checked={sidebarShowDiscussion} />} />}
 				<SortListItem icon={'group-by-type'} text={t('Type')} input={<CheckBox onChange={handleChangeGroupByType} name='sidebarGroupByType' checked={sidebarGroupByType} />} />
 				<SortListItem icon={'star'} text={t('Favorites')} input={<CheckBox onChange={handleChangeShoFavorite} name='sidebarShowFavorites' checked={sidebarShowFavorites} />} />
 				<SortListItem icon={'eye-off'} text={t('Unread_on_top')} input={<CheckBox onChange={handleChangeShowUnread} name='sidebarShowUnread' checked={sidebarShowUnread} />} />

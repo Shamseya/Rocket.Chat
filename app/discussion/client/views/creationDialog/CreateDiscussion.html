@@ -35,13 +35,15 @@
 				<div class="create-channel__inputs">
 					<div class="rc-input">
 						<label class="rc-input__label">
-							<div class="rc-input__title">{{_ "Discussion_name"}}</div>
+							<div class="rc-input__title">Patient Name</div>
 							<div class="rc-input__wrapper">
 								<div class="rc-input__icon">
-									{{> icon block="rc-input__icon-svg" icon="discussion"}}
+									{{> icon block="rc-input__icon-svg" icon="patient-add"}}
 								</div>
-								<input name="discussion_name" id="discussion_name" class="rc-input__element" placeholder="{{_ 'New_discussion_name'}}"
-									maxlength="{{maxMessageLength}}" value="{{nameSuggestion}}"/>
+								<!-- <input name="discussion_name" id="discussion_name" class="rc-input__element" placeholder="{{_ 'New_discussion_name'}}"
+									maxlength="{{maxMessageLength}}" value="{{nameSuggestion}}"/> -->
+								<input name="patientName" id="patientName" class="rc-input__element" placeholder="Patient Name" value="{{patientName}}"/>
+
 							</div>
 						</label>
 					</div>
@@ -63,14 +65,14 @@
 						modifier=userModifier
 					}}
 					<!-- Patient name -->
-					<div class="rc-input">
+					<!-- <div class="rc-input">
 						<label class="rc-input__label">
 							<div class="rc-input__title">Patient Name</div>
 							<div class="rc-input__wrapper">
 								<input name="patientName" id="patientName" class="rc-input__element" placeholder="Patient Name" value="{{patientName}}"/>
 							</div>
 						</label>
-					</div>
+					</div> -->
 
 				<!-- Patient ID -->
 					<div class="rc-input">
@@ -137,7 +139,7 @@
 								<label class="rc-input__label">
 									<div class="rc-input__title">Select a facility</div>
 									<div class="rc-input__wrapper">
-										<input class="rc-input__element" placeholder="Seletct An Investigation" style="cursor:pointer; background-color: white;" disabled="true" value="{{selectedFacility.name}}"/>
+										<input class="rc-input__element" placeholder="Seletct A facility" style="cursor:pointer; background-color: white;" disabled="true" value="{{selectedFacility.name}}"/>
 										<select id="facility-select" class="rc-input__element" style="opacity: 0; position: relative; top: -40px">
 											<option value="" disabled selected style="display:none;">Select a facility</option>
 											{{#each allFacilities}}
@@ -149,24 +151,24 @@
 							</div>
 
 
-							<!-- Investigation Select -->
-							<div class="rc-input" style="margin-top: -40px;">
-								<label class="rc-input__label">
-									<div class="rc-input__title" >Select an Investigation</div>
-									<div class="rc-input__wrapper">
-										<input class="rc-input__element" placeholder="Seletct An Investigation" style="cursor:pointer; background-color: white;" disabled="true" value="{{selectedInvestigation.name}}"/>
-										<select id="investigation-select" class="rc-input__element" style="opacity: 0; position: relative; top: -40px">
-											<option value="" disabled selected style="display:none;">Select an Investigation</option>
-											{{#each allInvestigations}}
-												<option value="{{this.name}}">{{this.name}}</option>
-											{{/each}}
-										</select>
-									</div>
-								</label>
-							</div>
-
+							
 							<!-- Facility must be selected before setting zoom room and anydesk   -->
 							{{#if selectedFacility}}
+								<!-- Investigation Select -->
+								<div class="rc-input" style="margin-top: -40px;">
+									<label class="rc-input__label">
+										<div class="rc-input__title" >Select an Investigation</div>
+										<div class="rc-input__wrapper">
+											<input class="rc-input__element" placeholder="Seletct An Investigation" style="cursor:pointer; background-color: white;" disabled="true" value="{{selectedInvestigation.name}}"/>
+											<select id="investigation-select" class="rc-input__element" style="opacity: 0; position: relative; top: -40px">
+												<option value="" disabled selected style="display:none;">Select an Investigation</option>
+												{{#each selectedFacility.investigations}}
+													<option value="{{this}}">{{this}}</option>
+												{{/each}}
+											</select>
+										</div>
+									</label>
+								</div>
 								<!-- Zoom Room Type -->
 								<div class="rc-input" style="margin-top: -40px;">
 									<label class="rc-input__label">
@@ -184,7 +186,7 @@
 								{{#if customZoomRoomSelected}}
 									<div class="rc-input">
 										<label class="rc-input__label">
-											<div class="rc-input__title">Custom Zoom Room</div>
+											<div class="rc-input__title"> Zoom Room</div>
 											<div class="rc-input__wrapper">
 												<input name="customZoomRoomLink" id="custom-zoom-room-link" class="rc-input__element" placeholder="Type your zoom link here" value="{{customZoomRoomLink}}"/>
 											</div>
@@ -195,7 +197,7 @@
 								{{#if standardZoomRoomSelected}}
 									<div class="rc-input">
 										<label class="rc-input__label">
-											<div class="rc-input__title">Custom Zoom Room</div>
+											<div class="rc-input__title">Zoom Room</div>
 											<div class="rc-input__wrapper">
 												<input name="automaticZoomRoomLink" id="automatic-zoom-room-link" class="rc-input__element" disabled="true" value="{{selectedFacility.zoomLink}}"/>
 											</div>
@@ -221,7 +223,7 @@
 									{{#if customAnydeskDeviceSelected}}
 										<div class="rc-input">
 											<label class="rc-input__label">
-												<div class="rc-input__title">Custom Anydesk Device Name</div>
+												<div class="rc-input__title">Anydesk Device Name</div>
 												<div class="rc-input__wrapper">
 													<input name="customZoomRoomLink" id="custom-anydesk-device-name" class="rc-input__element"  placeholder="Type you anydesk device name here"  value="{{customAnydeskDeviceName}}"/>
 												</div>
@@ -232,7 +234,7 @@
 									{{#if automaticAnydeskDeviceSelected}}
 										<div class="rc-input">
 											<label class="rc-input__label">
-												<div class="rc-input__title">Automatic Anydesk Device Name</div>
+												<div class="rc-input__title">Anydesk Device Name</div>
 												<div class="rc-input__wrapper">
 													<input name="customZoomRoomLink" id="automatic-anydesk-device-name" class="rc-input__element" disabled="true" value="{{automaticAnydeskDeviceName}}"/>
 												</div>

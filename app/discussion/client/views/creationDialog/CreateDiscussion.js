@@ -40,7 +40,7 @@ Template.CreateDiscussion.helpers({
 		return parentChannel && `${ TAPi18n.__('Discussion_target_channel_prefix') } "${ parentChannel }"`;
 	},
 	createIsDisabled() {
-		const { parentChannel, discussionName, 
+		const { parentChannel, 
 			patientName, patientID, patientDateOfBirth, 
 			serviceType, 
 			otherServiceTypeInvestigation,
@@ -51,7 +51,7 @@ Template.CreateDiscussion.helpers({
 			customAnydeskDeviceName,
 			selectedUsers
 		} = Template.instance();
-		if (!parentChannel.get() || !discussionName.get().trim() || !selectedUsers.get().length) return 'disabled';
+		if (!parentChannel.get()  || !selectedUsers.get().length) return 'disabled';
 		// Basic Custom Data
 		if (!patientName.get().trim() || !patientID.get().trim() || !patientDateOfBirth.get().trim()) return 'disabled';
 
@@ -245,7 +245,7 @@ Template.CreateDiscussion.events({
 		t.eye.set(e.target.value);
 	},
 	'input #facility-select'(e,t) {
-		t.selectedFacility.set(t.facilities.curValue.find(facility => facility.name === e.target.value));
+		t.selectedFacility.set(t.facilities.curValue.find(facility => facility?.name === e.target.value));
 	},
 	'input #investigation-select'(e,t) {
 		t.selectedInvestigation.set(t.investigations.curValue.find(investigation => investigation.name === e.target.value));
@@ -279,7 +279,7 @@ Template.CreateDiscussion.events({
 		const parentChannel = instance.parentChannel.get();
 
 		const { pmid } = instance;
-		const t_name = instance.discussionName.get();
+		const t_name = instance.patientName.get();
 		const users = instance.selectedUsers.get().map(({ username }) => username).filter((value, index, self) => self.indexOf(value) === index);
 		const encrypted = instance.encrypted.get();
 
@@ -303,14 +303,14 @@ Template.CreateDiscussion.events({
 			data.selectedInvestigation = selectedInvestigation.get();
 			data.zoomRoomType = zoomRoomType.get();
 			data.anydeskDeviceType = anydeskDeviceType.get();
-			if(zoomRoomType === "standard") {
+			if(zoomRoomType.get() === "standard") {
 				data.zoomRoomLink = instance.selectedFacility.get().zoomLink;
 			}
 			else {
 				data.zoomRoomLink = instance.customZoomRoomLink.get();
 			}
 
-			if(anydeskDeviceType === "automatic") {
+			if(anydeskDeviceType.get() === "automatic") {
 				let automaticAnyDesk = instance.devices.get().find
 				(
 					device => device.facilityName === instance.selectedFacility.get().name &&
@@ -366,7 +366,7 @@ Template.CreateDiscussion.onCreated(function() {
 	const roomName = room && roomTypes.getRoomName(room.t, room);
 	this.discussionName = new ReactiveVar(suggestName(msg && msg.msg));
 
-	this.serviceType =new ReactiveVar(null)
+	this.serviceType =new ReactiveVar('ophthalmology')
 
 	this.patientName = new ReactiveVar('');
 	this.patientID = new ReactiveVar('');
@@ -381,10 +381,10 @@ Template.CreateDiscussion.onCreated(function() {
 	this.devices = new ReactiveVar(allDevices)
 	this.selectedDevice = new ReactiveVar(null)
 
-	this.zoomRoomType=new ReactiveVar(null);
+	this.zoomRoomType=new ReactiveVar('standard');
 	this.customZoomRoomLink=new ReactiveVar('');
 
-	this.anydeskDeviceType=new ReactiveVar(null);
+	this.anydeskDeviceType=new ReactiveVar('automatic');
 	this.customAnydeskDeviceName=new ReactiveVar('');
 
 	this.otherServiceTypeInvestigation = new ReactiveVar('')

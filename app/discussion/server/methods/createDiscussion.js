@@ -114,7 +114,7 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => 
 		zoomRoomType, 
 		customZoomRoomLink, 
 		anydeskDeviceType, 
-		customAnydeskDeviceName,
+		anydeskDeviceName,
 		selectedUsers
 	} = data;
 
@@ -155,8 +155,8 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => 
 					method: 'DiscussionCreation',
 				});
 
-			if( !customAnydeskDeviceName.trim()) 
-				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter customAnydeskDeviceName', {
+			if( !anydeskDeviceName.trim()) 
+				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter anydeskDeviceName', {
 					method: 'DiscussionCreation',
 				});
 		}

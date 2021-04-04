@@ -81,6 +81,7 @@ const RoomHeader = ({ room, topic }) => {
 				<Header.Subtitle>{topic && <MarkdownText variant='inlineWithoutBreaks' content={topic}/>}</Header.Subtitle>
 			</Header.Content.Row>
 		</Header.Content>
+
 		<Header.ToolBox>
 			<ToolBox room={room}/>
 		</Header.ToolBox>

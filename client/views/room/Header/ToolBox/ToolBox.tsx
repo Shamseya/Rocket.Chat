@@ -24,7 +24,8 @@ const ToolBox = ({ className }: { className: BoxProps['className'] }): JSX.Eleme
 	const hiddenActionRenderers = useRef<{[key: string]: OptionRenderer}>({});
 
 	const { actions: mapActions } = useContext(ToolboxContext);
-	const actions = (Array.from(mapActions.values()) as ToolboxActionConfig[]).sort((a, b) => (a.order || 0) - (b.order || 0));
+	let actions = (Array.from(mapActions.values()) as ToolboxActionConfig[]).sort((a, b) => (a.order || 0) - (b.order || 0));
+
 	const visibleActions = isMobile ? [] : actions.slice(0, 6);
 
 
@@ -44,20 +45,6 @@ const ToolBox = ({ className }: { className: BoxProps['className'] }): JSX.Eleme
 		openTabBar(actions[index].id);
 	});
 
-	// const open = useMutableCallback((index) => {
-	// 	openTabBar(actions[index].id);
-	// });
-
-	// useEffect(() => {
-	// 	if (!visibleActions.length) {
-	// 		return;
-	// 	}
-	// 	const unsubscribe = tinykeys(window, Object.fromEntries(new Array(visibleActions.length).fill(true).map((_, index) => [`$mod+${ index + 1 }`, (): void => { open(index); }])));
-
-	// 	return (): void => {
-	// 		unsubscribe();
-	// 	};
-	// }, [visibleActions.length, open]);
 
 	return <>
 		{ visibleActions.map(({ renderAction, id, icon, title, action = actionDefault }, index) => {

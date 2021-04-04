@@ -2,6 +2,7 @@ import React from 'react';
 
 import { IRoom, IOmnichannelRoom, IDirectMessageRoom } from '../../definition/IRoom';
 import { ReactiveUserStatus } from '../components/UserStatus';
+import PatientAdd from '../customIcons/PatientAdd';
 
 
 export const colors = {
@@ -13,7 +14,7 @@ export const colors = {
 
 export const useRoomIcon = (room: IRoom, small = true): JSX.Element | { name: string; color?: string } | null => {
 	if (room.prid) {
-		return { name: 'baloons' };
+		return <PatientAdd />
 	}
 
 	switch (room.t) {

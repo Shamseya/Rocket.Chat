@@ -36,10 +36,10 @@ const Extended = React.memo(({
 			{ avatar }
 		</Sidebar.Item.Avatar>}
 		<Sidebar.Item.Content>
-			<Sidebar.Item.Wrapper>
+			<Sidebar.Item.Wrapper >
 				{ icon }
 				<Sidebar.Item.Title data-qa='sidebar-item-title' className={unread && 'rcx-sidebar-item--highlighted'}>
-					{ title }
+					{ title } 
 				</Sidebar.Item.Title>
 				{time && <Sidebar.Item.Time>{formatDate(time)}</Sidebar.Item.Time>}
 			</Sidebar.Item.Wrapper>
