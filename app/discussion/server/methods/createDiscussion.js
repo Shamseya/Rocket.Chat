@@ -113,15 +113,16 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => 
 		referringDoctor, eye, selectedFacility, selectedInvestigation, 
 		zoomRoomType, 
 		customZoomRoomLink, 
+		zoomRoomLink,
 		anydeskDeviceType, 
 		anydeskDeviceName,
-		selectedUsers
+		// selectedUsers
 	} = data;
 
-	if (!selectedUsers.length) 
-	throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Specialist/Conultant .', {
-		method: 'DiscussionCreation',
-	});
+	// if (!selectedUsers.length) 
+	// throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Specialist/Conultant .', {
+	// 	method: 'DiscussionCreation',
+	// });
 
 	if (!patientName.trim() || !patientID.trim() || !patientDateOfBirth.trim()) 
 		throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Patient name/id/DOB.', {
@@ -201,6 +202,25 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => 
 	if (reply) {
 		sendMessage(user, { msg: reply }, discussion);
 	}
+
+	// ref: https://attacomsian.com/blog/javascript-check-variable-is-object
+	const isObject = (obj) => {
+		return Object.prototype.toString.call(obj) === '[object Object]';
+	};
+
+	// send all of the ticket's data to the newly created discussion
+	let ticketData = "";
+	for (key in data) {
+		if (isObject(data[key])) {
+			for (item in data[key])
+				ticketData += item + ": " + data[key][item] + " \n";
+		}
+		else {
+			ticketData += key + ": " + data[key] + " \n";
+		}
+	}
+
+	sendMessage(user, { msg: ticketData }, discussion);
 	return discussion;
 };
 
