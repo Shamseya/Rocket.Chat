@@ -40,8 +40,6 @@
 								<div class="rc-input__icon">
 									{{> icon block="rc-input__icon-svg" icon="patient-add"}}
 								</div>
-								<!-- <input name="discussion_name" id="discussion_name" class="rc-input__element" placeholder="{{_ 'New_discussion_name'}}"
-									maxlength="{{maxMessageLength}}" value="{{nameSuggestion}}"/> -->
 								<input name="patientName" id="patientName" class="rc-input__element" placeholder="Patient Name" value="{{patientName}}"/>
 
 							</div>
@@ -143,7 +141,7 @@
 										<select id="facility-select" class="rc-input__element" style="opacity: 0; position: relative; top: -40px">
 											<option value="" disabled selected style="display:none;">Select a facility</option>
 											{{#each allFacilities}}
-												<option value="{{this.name}}">{{this.name}}</option>
+												<option  value="{{this.name}}">{{this.name}}</option>
 											{{/each}}
 										</select>
 									</div>
@@ -154,21 +152,7 @@
 							
 							<!-- Facility must be selected before setting zoom room and anydesk   -->
 							{{#if selectedFacility}}
-								<!-- Investigation Select -->
-								<div class="rc-input" style="margin-top: -40px;">
-									<label class="rc-input__label">
-										<div class="rc-input__title" >Select an Investigation</div>
-										<div class="rc-input__wrapper">
-											<input class="rc-input__element" placeholder="Seletct An Investigation" style="cursor:pointer; background-color: white;" disabled="true" value="{{selectedInvestigation.name}}"/>
-											<select id="investigation-select" class="rc-input__element" style="opacity: 0; position: relative; top: -40px">
-												<option value="" disabled selected style="display:none;">Select an Investigation</option>
-												{{#each selectedFacility.investigations}}
-													<option value="{{this}}">{{this}}</option>
-												{{/each}}
-											</select>
-										</div>
-									</label>
-								</div>
+
 								<!-- Zoom Room Type -->
 								<div class="rc-input" style="margin-top: -40px;">
 									<label class="rc-input__label">
@@ -186,7 +170,7 @@
 								{{#if customZoomRoomSelected}}
 									<div class="rc-input">
 										<label class="rc-input__label">
-											<div class="rc-input__title"> Zoom Room</div>
+											<div class="rc-input__title">Zoom Room</div>
 											<div class="rc-input__wrapper">
 												<input name="customZoomRoomLink" id="custom-zoom-room-link" class="rc-input__element" placeholder="Type your zoom link here" value="{{customZoomRoomLink}}"/>
 											</div>
@@ -204,44 +188,70 @@
 										</label>
 									</div>
 								{{/if}}
+								
+								<div style="height: 2px; width: 80%; background: #0005; margin: 10px auto"> </div>	
 
-								<!-- Investigation must be selected before setting anydesk -->
-								{{#if selectedInvestigation}}
-									<!-- AnyDesk Device -->
-									<div class="rc-input">
+								{{#each selectedInvestigations}}
+									<!-- Investigation Select -->
+									<div class="rc-input" style= "margin: 10px 0px">
 										<label class="rc-input__label">
-											<div class="rc-input__title">AnyDesk Device</div>
-											<div id="anydesk-device-type-radio-buttons" class="rc-input__wrapper">
-												<input type="radio" id="automatic-anydesk-device-radio-button" name="anydesk-device-type" value="automatic" checked="{{automaticAnydeskDeviceSelected}}">
-												<label for="automatic-anydesk-device-radio-button"> Automatic</label>
-												<input type="radio" id="custom-anydesk-device-radio-button" name="anydesk-device-type" value="custom" checked="{{customAnydeskDeviceSelected}}">
-												<label for="custom-anydesk-device-radio-button"> Custom</label>
+											<div class="rc-input__title">Select an Investigation</div>
+											<div class="rc-input__wrapper">
+												<input class="rc-input__element" placeholder="Seletct An Investigation" style="cursor:pointer; background-color: white;" disabled="true" value="{{this.investigation.name}}"/>
+												<select id="investigation-select" name={{@index}} key={{@index}} class="rc-input__element" style="opacity: 0; position: relative; top: -40px">
+													<option value="" disabled selected style="display:none;">Select an Investigation</option>
+													{{#each selectedFacility.investigations}}
+														<option value="{{this}}">{{this}}</option>
+													{{/each}}
+												</select>
 											</div>
 										</label>
 									</div>
-									<!-- AnyDesk Device Data -->
-									{{#if customAnydeskDeviceSelected}}
-										<div class="rc-input">
-											<label class="rc-input__label">
-												<div class="rc-input__title">Anydesk Device Name</div>
-												<div class="rc-input__wrapper">
-													<input name="customZoomRoomLink" id="custom-anydesk-device-name" class="rc-input__element"  placeholder="Type you anydesk device name here"  value="{{customAnydeskDeviceName}}"/>
-												</div>
-											</label>
-										</div>
-									{{/if}}
+									
 
-									{{#if automaticAnydeskDeviceSelected}}
-										<div class="rc-input">
+										<!-- AnyDesk Device -->
+										<div class="rc-input" style="margin-top: -40px;">
 											<label class="rc-input__label">
-												<div class="rc-input__title">Anydesk Device Name</div>
-												<div class="rc-input__wrapper">
-													<input name="customZoomRoomLink" id="automatic-anydesk-device-name" class="rc-input__element" disabled="true" value="{{automaticAnydeskDeviceName}}"/>
+												<div class="rc-input__title">AnyDesk Device</div>
+												<div id="anydesk-device-type-radio-buttons" name={{@index}} class="rc-input__wrapper">
+													<input type="radio" id="automatic-anydesk-device-radio-button" name={{@index}} value="automatic" checked="{{this.automatic}}">
+													<label for="automatic-anydesk-device-radio-button"> Automatic</label>
+													<input type="radio" id="custom-anydesk-device-radio-button" name={{@index}} value="custom" checked="{{this.custom}}">
+													<label for="custom-anydesk-device-radio-button"> Custom</label>
 												</div>
 											</label>
 										</div>
-									{{/if}}
-								{{/if}}
+										<!-- AnyDesk Device Data -->
+										{{#if this.custom}}
+											<div class="rc-input">
+												<label class="rc-input__label">
+													<div class="rc-input__title">Anydesk Device Name</div>
+													<div class="rc-input__wrapper">
+														<input  name={{@index}} id="custom-anydesk-device-name" class="rc-input__element"  placeholder="Type you anydesk device name here"  value="{{this.device}}"/>
+													</div>
+												</label>
+											</div>
+										{{/if}}
+
+										{{#if this.automatic}}
+											<div class="rc-input">
+												<label class="rc-input__label">
+													<div class="rc-input__title">Anydesk Device Name</div>
+													<div class="rc-input__wrapper">
+														<input name={{@index}} id="automatic-anydesk-device-name" class="rc-input__element" disabled="true" value="{{this.device}}"/>
+													</div>
+												</label>
+											</div>
+										{{/if}}
+									<button id="remove-investigation" style="min-height:30px; height:30px; border: 1px solid #aa6452; background-color: lightgray;margin-left: auto" class="rc-button rc-button--secondary js-remove-investigation" 
+									type="button" name = {{@index}} disabled = "{{isOnlyInesvtigation}}"> Remove this Investigation</button>
+									
+									<div style="height: 2px; width: 80%; background: #0005; margin: 20px auto"> </div>	
+									
+								{{/each}}
+								<button id="add-investigation" class="rc-button js-add-investigation" type="button" style = "margin: 20px 0px; border: 1px solid #0003">Add an Investigation</button>
+
+
 							{{/if}}
 						{{/if}}
 

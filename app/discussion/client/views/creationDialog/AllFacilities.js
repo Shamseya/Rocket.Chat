@@ -6,7 +6,7 @@ export const allFacilities = [
         ,
         {
             name: 'Bostan Downtown Electrophysiology',
-            zoomLink: ' https://us05web.zoom.us/j/9308720708?pwd=OGFtZllrZjBzTXdGZFJsNngzcnNMZz09 ',
+            zoomLink: 'https://us05web.zoom.us/j/9308720708?pwd=OGFtZllrZjBzTXdGZFJsNngzcnNMZz09',
             investigations:[
                 "ERG",
                 "VEP",
@@ -48,7 +48,7 @@ export const allFacilities = [
         ,
         {
             name: 'Bostan Fayom Electrophysiology',
-            zoomLink: ' https://us05web.zoom.us/j/3877188371?pwd=R2MxU2VCUS9pWHQ0ZGtnWE9uVk56Zz09 ',
+            zoomLink: 'https://us05web.zoom.us/j/3877188371?pwd=R2MxU2VCUS9pWHQ0ZGtnWE9uVk56Zz09',
             investigations:[
             "ERG",
             "VEP",

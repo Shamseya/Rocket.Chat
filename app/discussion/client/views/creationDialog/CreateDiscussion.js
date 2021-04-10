@@ -44,11 +44,9 @@ Template.CreateDiscussion.helpers({
 			patientName, patientID, patientDateOfBirth, 
 			serviceType, 
 			otherServiceTypeInvestigation,
-			referringDoctor, eye, selectedFacility, selectedInvestigation, 
+			referringDoctor, eye, selectedFacility, selectedInvestigations, 
 			zoomRoomType, 
 			customZoomRoomLink, 
-			anydeskDeviceType, 
-			customAnydeskDeviceName,
 			selectedUsers
 		} = Template.instance();
 		if (!parentChannel.get()  || !selectedUsers.get().length) return 'disabled';
@@ -69,7 +67,13 @@ Template.CreateDiscussion.helpers({
 		}
 		////// Service Type is ophthalmology
 		// Basic ophthalmology fields
-		if(!referringDoctor.get().trim() || !eye.get().trim() || !selectedFacility.get() || !selectedInvestigation.get()) return 'disabled';
+		if(!referringDoctor.get().trim() || !eye.get().trim() || !selectedFacility.get() || !selectedInvestigations.get().length === 0) return 'disabled';
+
+		selectedInvestigations.get().forEach((inv) => {
+			if(!inv.investigation.name || !inv.device) {
+				return 'disabled'
+			}
+		});
 
 		//// Zoon Room type is set
 		if(!zoomRoomType.get()) return 'disabled';
@@ -78,19 +82,6 @@ Template.CreateDiscussion.helpers({
 		// Zoom room type is custom, custom zoomlink
 		if(zoomRoomType.get().trim() === "custom" && !customZoomRoomLink.get()?.trim()) return 'disabled';
 
-		//// Anydesk device type is set
-		if(!anydeskDeviceType.get()) return 'disabled';
-		// Anydesk device type is automatic, facility's & investigation anydesk device name
-		if(anydeskDeviceType.get().trim() === "automatic") {
-			let automaticAnyDesk = Template.instance().devices.get().find
-		(
-			device => device.facilityName === Template.instance().selectedFacility.get()?.name &&
-			device.investigation === Template.instance().selectedInvestigation.get()?.name
-		)
-			if(!automaticAnyDesk?.anydeskDeviceName) return 'disabled';
-		}
-		// Anydesk device type is custom, custom anudesk device name
-		if(anydeskDeviceType.get().trim() === "custom" && !customAnydeskDeviceName.get().trim()) return 'disabled';
 
 		// // All pass => Correct
 		return '';
@@ -175,14 +166,14 @@ Template.CreateDiscussion.helpers({
 	allInvestigations() {
 		return Template.instance().investigations.get();
 	},
-	selectedInvestigation() {
-		return Template.instance().selectedInvestigation.get();
+	isOnlyInesvtigation() {
+		return Template.instance().selectedInvestigations.get().length === 1;
+	},
+	selectedInvestigations() {
+		return Template.instance().selectedInvestigations.get();
 	},
 	allDevices() {
 		return Template.instance().devices.get();
-	},
-	selectedDevice() {
-		return Template.instance().selectedDevice.get();
 	},
 	standardZoomRoomSelected() {
 		return Template.instance().zoomRoomType.get() === "standard";
@@ -193,23 +184,8 @@ Template.CreateDiscussion.helpers({
 	customZoomRoomLink() {
 		return Template.instance().customZoomRoomLink.get();
 	},
-	automaticAnydeskDeviceSelected() {
-		return Template.instance().anydeskDeviceType.get() === "automatic";
-	},
-	customAnydeskDeviceSelected() {
-		return Template.instance().anydeskDeviceType.get() === "custom";
-	},
-	customAnydeskDeviceName() {
-		return Template.instance().customAnydeskDeviceName.get();
-	},
-	automaticAnydeskDeviceName() {
-		let automaticAnyDesk = Template.instance().devices.get().find
-		(
-			device => device.facilityName === Template.instance().selectedFacility.get().name &&
-			device.investigation === Template.instance().selectedInvestigation.get().name
-		)
-		return automaticAnyDesk?.anydeskDeviceName;
-	},
+
+
 	otherServiceTypeInvestigation() {
 		return Template.instance().otherServiceTypeInvestigation.get()
 	}
@@ -245,15 +221,20 @@ Template.CreateDiscussion.events({
 		t.eye.set(e.target.value);
 	},
 	'input #facility-select'(e,t) {
-		t.selectedFacility.set(t.facilities.curValue.find(facility => facility?.name === e.target.value));
+		t.selectedFacility.set(t.facilities.curValue[parseInt(e.target.options.selectedIndex) - 1 ]);
 	},
 	'input #investigation-select'(e,t) {
-		t.selectedInvestigation.set(t.investigations.curValue.find(investigation => investigation.name === e.target.value));
+		let investigation = t.investigations.curValue.find(investigation => investigation.name === e.target.value);
+		let newInvestigations = [...t.selectedInvestigations.get()];
+		newInvestigations[parseInt(e.target.name)].investigation = investigation;
+		let automaticAnyDesk = Template.instance().devices.get().find
+			(
+				device => device.facilityName === Template.instance().selectedFacility.get().name &&
+				device.investigation === newInvestigations[e.target.name].investigation.name
+			)
+		newInvestigations[parseInt(e.target.name)].device = automaticAnyDesk.anydeskDeviceName;			
+		t.selectedInvestigations.set(newInvestigations);
 	},
-	'input #device-select'(e,t) {
-		t.selectedDevice.set(t.devices.curValue.find(device => investigation.anydeskDeviceName === e.target.value));
-	},
-
 	'input #zoom-room-radio-buttons'(e,t) {
 		t.zoomRoomType.set(e.target.value);
 	},
@@ -262,15 +243,48 @@ Template.CreateDiscussion.events({
 	},
 
 	'input #anydesk-device-type-radio-buttons'(e,t) {
-		t.anydeskDeviceType.set(e.target.value);
+		let newInvestigations = [...t.selectedInvestigations.get()];
+		if(e.target.value === 'automatic') {
+
+			let automaticAnyDesk = Template.instance().devices.get().find
+			(
+				device => device.facilityName === Template.instance().selectedFacility.get().name &&
+				device.investigation === newInvestigations[e.target.name].investigation.name
+			)
+			newInvestigations[parseInt(e.target.name)].device = automaticAnyDesk.anydeskDeviceName;
+			newInvestigations[parseInt(e.target.name)].automatic = true;
+			newInvestigations[parseInt(e.target.name)].custom = false;
+		}
+		else {
+			newInvestigations[parseInt(e.target.name)].automatic = false;
+			newInvestigations[parseInt(e.target.name)].custom = true;
+		}
+		t.selectedInvestigations.set(newInvestigations);
 	},
 
 	'input #custom-anydesk-device-name'(e,t) {
-		t.customAnydeskDeviceName.set(e.target.value);
+		let investigation = t.investigations.curValue.find(investigation => investigation.name === e.target.value);
+		let newInvestigations = [...t.selectedInvestigations.get()];
+		newInvestigations[parseInt(e.target.name)].device = e.target.value;
+		t.selectedInvestigations.set(newInvestigations);
 	},
 
 	'input #other-service-type-investigation'(e,t) {
 		t.otherServiceTypeInvestigation.set(e.target.value);
+	},
+
+	'click #add-investigation'(e,t) {
+		let newInvestigations = [...t.selectedInvestigations.get()];
+		let emptyInvestigation = {investigation: '', device: '', automatic: true, custom: false };
+		newInvestigations.push(emptyInvestigation);
+		t.selectedInvestigations.set(newInvestigations);
+	},
+
+	'click #remove-investigation'(e,t) {
+		let newInvestigations = [...t.selectedInvestigations.get()];
+		if(newInvestigations.length === 1) return;
+		newInvestigations.splice(parseInt(e.target.name),1);
+		t.selectedInvestigations.set(newInvestigations);
 	},
 
 	async 'submit #create-discussion, click .js-save-discussion'(event, instance) {
@@ -296,37 +310,21 @@ Template.CreateDiscussion.events({
 			data.otherServiceTypeInvestigation = instance.otherServiceTypeInvestigation.get();
 		}
 		else {
-			const {referringDoctor, eye, selectedFacility, selectedInvestigation, zoomRoomType, anydeskDeviceType } = instance;
+			const {referringDoctor, eye, selectedFacility, selectedInvestigations, zoomRoomType, anydeskDeviceType } = instance;
 			data.referringDoctor = referringDoctor.get();
 			data.eye = eye.get();
 			data.selectedFacility = selectedFacility.get();
-			data.selectedInvestigation = selectedInvestigation.get();
+			data.selectedInvestigations = selectedInvestigations.get();
 			data.zoomRoomType = zoomRoomType.get();
-			data.anydeskDeviceType = anydeskDeviceType.get();
 			if(zoomRoomType.get() === "standard") {
 				data.zoomRoomLink = instance.selectedFacility.get().zoomLink;
 			}
 			else {
 				data.zoomRoomLink = instance.customZoomRoomLink.get();
 			}
-
-			if(anydeskDeviceType.get() === "automatic") {
-				let automaticAnyDesk = instance.devices.get().find
-				(
-					device => device.facilityName === instance.selectedFacility.get().name &&
-					device.investigation === instance.selectedInvestigation.get().name
-				)
-				data.anydeskDeviceName = automaticAnyDesk.anydeskDeviceName;
-			}
-			else {
-				data.anydeskDeviceName = instance.customAnydeskDeviceName.get();
-
-			}
 		}
-		console.log('creating a patient with these data')
-		console.log(data);
-		
-
+	
+	
 		if (!prid) {
 			const errorText = TAPi18n.__('Invalid_room_name', `${ parentChannel }...`);
 			return toastr.error(errorText);
@@ -345,7 +343,7 @@ Template.CreateDiscussion.events({
 });
 
 Template.CreateDiscussion.onRendered(function() {
-	this.find(this.data.rid ? '#discussion_name' : '#parentChannel').focus();
+	this.find(this.data.rid ? '#patientName' : '#parentChannel').focus();
 });
 
 const suggestName = (msg = '') => msg.substr(0, 140);
@@ -377,15 +375,13 @@ Template.CreateDiscussion.onCreated(function() {
 	this.facilities = new ReactiveVar(allFacilities)
 	this.selectedFacility = new ReactiveVar(null)
 	this.investigations = new ReactiveVar(allInvestigations)
-	this.selectedInvestigation = new ReactiveVar(null)
+
+	this.selectedInvestigations = new ReactiveVar([{investigation: '', device: '', automatic: true, custom: false }])
 	this.devices = new ReactiveVar(allDevices)
-	this.selectedDevice = new ReactiveVar(null)
 
 	this.zoomRoomType=new ReactiveVar('standard');
 	this.customZoomRoomLink=new ReactiveVar('');
 
-	this.anydeskDeviceType=new ReactiveVar('automatic');
-	this.customAnydeskDeviceName=new ReactiveVar('');
 
 	this.otherServiceTypeInvestigation = new ReactiveVar('')
 

@@ -9,6 +9,7 @@ import { createRoom, addUserToRoom, sendMessage, attachMessage } from '../../../
 import { settings } from '../../../settings/server';
 import { roomTypes } from '../../../utils/server';
 import { callbacks } from '../../../callbacks/server';
+// import ConnectionStatusAlertStories from '/client/components/connectionStatus/ConnectionStatusAlert.stories';
 
 const getParentRoom = (rid) => {
 	const room = Rooms.findOne(rid);
@@ -39,6 +40,7 @@ const mentionMessage = (rid, { _id, username, name }, message_embedded) => {
 
 const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => {
 	// if you set both, prid and pmid, and the rooms doesnt match... should throw an error)
+
 	let message = false;
 	if (pmid) {
 		message = Messages.findOne({ _id: pmid });
@@ -106,23 +108,18 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => 
 			method: 'DiscussionCreation',
 		});
 	}
+
 	const { parentChannel, discussionName, 
 		patientName, patientID, patientDateOfBirth, 
 		serviceType, 
 		otherServiceTypeInvestigation,
-		referringDoctor, eye, selectedFacility, selectedInvestigation, 
+		referringDoctor, eye, selectedFacility, selectedInvestigations, 
 		zoomRoomType, 
 		customZoomRoomLink, 
 		zoomRoomLink,
-		anydeskDeviceType, 
-		anydeskDeviceName,
-		// selectedUsers
+		
 	} = data;
 
-	// if (!selectedUsers.length) 
-	// throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Specialist/Conultant .', {
-	// 	method: 'DiscussionCreation',
-	// });
 
 	if (!patientName.trim() || !patientID.trim() || !patientDateOfBirth.trim()) 
 		throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Patient name/id/DOB.', {
@@ -139,10 +136,19 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => 
 			});
 		
 		if(serviceType === "ophthalmology") {
-			if(!referringDoctor.trim() || !eye.trim() || !selectedFacility || !selectedInvestigation) 
-				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter referringDoctor/eye/selectedFacility/selectedInvestigation', {
+			if(!referringDoctor.trim() || !eye.trim() || !selectedFacility || !selectedInvestigations) 
+				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter referringDoctor/eye/selectedFacility/selectedInvestigations', {
 					method: 'DiscussionCreation',
 				});
+
+			selectedInvestigations.forEach((inv) => {
+				if(!inv.investigation.name || !inv.device) {
+					throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter investigation Data', {
+						method: 'DiscussionCreation',
+					});
+				}
+			});
+
 			if(!zoomRoomType.trim()) 
 				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter zoomRoomType', {
 					method: 'DiscussionCreation',
@@ -151,15 +157,7 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => 
 				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter zoomRoomLink', {
 					method: 'DiscussionCreation',
 				});
-			if(!anydeskDeviceType.trim()) 
-				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter anydeskDeviceType', {
-					method: 'DiscussionCreation',
-				});
 
-			if( !anydeskDeviceName.trim()) 
-				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter anydeskDeviceName', {
-					method: 'DiscussionCreation',
-				});
 		}
 
 	/// End Patient Data Validation
@@ -203,23 +201,34 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => 
 		sendMessage(user, { msg: reply }, discussion);
 	}
 
-	// ref: https://attacomsian.com/blog/javascript-check-variable-is-object
-	const isObject = (obj) => {
-		return Object.prototype.toString.call(obj) === '[object Object]';
-	};
-
+	
 	// send all of the ticket's data to the newly created discussion
+	let zoomRoomLinkHere = "[here]("+data.zoomRoomLink.trim()+")";
+	let date = data.patientDateOfBirth.split('-');
 	let ticketData = "";
-	for (key in data) {
-		if (isObject(data[key])) {
-			for (item in data[key])
-				ticketData += item + ": " + data[key][item] + " \n";
-		}
-		else {
-			ticketData += key + ": " + data[key] + " \n";
-		}
+	ticketData += `Patient Name: *${data.patientName}* \n`;
+	ticketData += `Patient ID: *${data.patientID}* \n`;
+	ticketData += `DOB: *${date[2]}/${date[1]}/${date[0]}* \n`;
+	if(data.serviceType === 'ophthalmology') {
+		ticketData += `Referred By: *Dr ${data.referringDoctor}* \n`;
+		ticketData += `Eyes: *${data.eye}* \n`;
+		ticketData += `Facility: *${data.selectedFacility.name}* \n`;
 	}
+	ticketData += `Technician/Specialist: *${invitedUsers}* \n\n`;
+	
+	selectedInvestigations.forEach((inv) => {
+		ticketData += `Investigation: *${inv.investigation.name}* \n`;
+		ticketData += `Anydesk Device Name: *${inv.device}* \n\n`;
+	});
 
+	if(data.serviceType === 'ophthalmology') {
+		ticketData += `Talk to the local specialist ${zoomRoomLinkHere} \n`;
+
+	}
+	if(data.serviceType === 'other') {
+		ticketData += `Service Type Investigation *${otherServiceTypeInvestigation}*`;
+	}
+	
 	sendMessage(user, { msg: ticketData }, discussion);
 	return discussion;
 };
@@ -236,8 +245,6 @@ Meteor.methods({
 	* @param {boolean} encrypted - if the discussion's e2e encryption should be enabled.
 	*/
 	createDiscussion({ prid, pmid, t_name, reply, users, encrypted, data }) {
-		console.log('in server => createDiscussion.js')
-		console.log(data)
 		if (!settings.get('Discussion_enabled')) {
 			throw new Meteor.Error('error-action-not-allowed', 'You are not allowed to create a discussion', { method: 'createDiscussion' });
 		}
