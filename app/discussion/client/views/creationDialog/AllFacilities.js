@@ -21,6 +21,7 @@ export const allFacilities = [
                 "EMG two muscles",
                 "EMG three muscles",
                 "EMG four muscles",
+                "VEP + ERG"
             ]
         }
         ,
@@ -56,7 +57,9 @@ export const allFacilities = [
             "EOG",
             "VEP Multi Focal",
             "ERG Multi Focal",
-            "Sweep VEP"]
+            "Sweep VEP",
+            "VEP + ERG"
+        ]
         }
         ,
         {
@@ -78,7 +81,9 @@ export const allFacilities = [
                 "Anterior segment OCT",
                 "OCT Angiography Retina",
                 "OCT Angiography Optic nerve",
-                "OCT angiography unspecified"
+                "OCT angiography unspecified",
+                "Visual field",
+                "Optical Biometry"
             ]
         }
     ]

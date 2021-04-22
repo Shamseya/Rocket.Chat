@@ -142,6 +142,13 @@ export const allDevices =
     },
     {
       "facilityName": "Bostan Fayom Electrophysiology",
+      "investigation": "VEP + ERG",
+      "device": "Roland",
+      "anydeskDeviceName": "vep-fayom@ad",
+      "deviceID": null
+    },
+    {
+      "facilityName": "Bostan Fayom Electrophysiology",
       "investigation": "Sweep VEP",
       "device": "Roland",
       "anydeskDeviceName": "vep-fayom@ad",
@@ -253,6 +260,13 @@ export const allDevices =
       "deviceID": null
     },
     {
+      "facilityName": "Bostan Downtown Electrophysiology",
+      "investigation": "VEP + ERG",
+      "device": "Roland",
+      "anydeskDeviceName": "vep-bostan-dt@ad",
+      "deviceID": null
+    },
+    {
       "facilityName": "RCC Helwan General",
       "investigation": "Fluorescein angiography",
       "device": "",
@@ -264,6 +278,20 @@ export const allDevices =
       "investigation": "Auto Fluorescence",
       "device": "",
       "anydeskDeviceName": "fluorescein-rcc-helwan@ad",
+      "deviceID": null
+    },
+    {
+      "facilityName": "RCC Helwan General",
+      "investigation": "Visual field",
+      "device": "IOL Master",
+      "anydeskDeviceName": "None",
+      "deviceID": null
+    },
+    {
+      "facilityName": "RCC Helwan General",
+      "investigation": "Optical Biometry",
+      "device": "IOL Master",
+      "anydeskDeviceName": "None",
       "deviceID": null
     },
     {

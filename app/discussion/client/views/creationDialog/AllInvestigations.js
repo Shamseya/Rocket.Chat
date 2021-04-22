@@ -30,5 +30,6 @@ export const allInvestigations =
 { name:"EMG four muscles"},
 { name:"Specular Microscopy"},
 { name:"Optical Biometry"},
+{ name:"VEP + ERG"},
 ]
 
