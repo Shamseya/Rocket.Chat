@@ -39,7 +39,7 @@ export const allFacilities = [
                 "Anterior segment OCT",
                 "OCT Angiography Retina",
                 "OCT Angiography Optic nerve",
-                "Oct angiography unspecified",
+                "OCT Angiography unspecified",
                 "Pentacam",
                 "Pachymetry",
                 "Visual field",
@@ -81,7 +81,7 @@ export const allFacilities = [
                 "Anterior segment OCT",
                 "OCT Angiography Retina",
                 "OCT Angiography Optic nerve",
-                "OCT angiography unspecified",
+                "OCT Angiography unspecified",
                 "Visual field",
                 "Optical Biometry"
             ]

@@ -72,7 +72,7 @@ export const allDevices =
     },
     {
       "facilityName": "Bostan Fayom General",
-      "investigation": "Oct angiography unspecified",
+      "investigation": "OCT Angiography unspecified",
       "device": "Optovue",
       "anydeskDeviceName": "oct-rtvue-fayom@ad",
       "deviceID": null
@@ -93,7 +93,7 @@ export const allDevices =
     },
     {
       "facilityName": "Bostan Fayom General",
-      "investigation": "Visual field ",
+      "investigation": "Visual field",
       "device": "Humphrey",
       "anydeskDeviceName": "None",
       "deviceID": null
@@ -352,7 +352,7 @@ export const allDevices =
     },
     {
       "facilityName": "RCC Helwan General",
-      "investigation": "OCT angiography unspecified",
+      "investigation": "OCT Angiography unspecified",
       "device": "",
       "anydeskDeviceName": "oct-rcc-helwan@ad",
       "deviceID": 232078979
