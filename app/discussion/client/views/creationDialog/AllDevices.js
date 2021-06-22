@@ -356,5 +356,62 @@ export const allDevices =
       "device": "",
       "anydeskDeviceName": "oct-rcc-helwan@ad",
       "deviceID": 232078979
-    }
+    },
+	// NEW
+	{
+      "facilityName": "Bostan Maadi Electrophysiology",
+      "investigation": "ERG",
+      "device": "",
+      "anydeskDeviceName": "vep-bostan-maadi@ad",
+      "deviceID": null
+    },
+	{
+      "facilityName": "Bostan Maadi Electrophysiology",
+      "investigation": "VEP",
+      "device": "",
+      "anydeskDeviceName": "vep-bostan-maadi@ad",
+      "deviceID": null
+    },
+	{
+      "facilityName": "Bostan Maadi Electrophysiology",
+      "investigation": "VEP flash & pattern",
+      "device": "",
+      "anydeskDeviceName": "vep-bostan-maadi@ad",
+      "deviceID": null
+    },
+	{
+      "facilityName": "Bostan Maadi Electrophysiology",
+      "investigation": "VEP + ERG",
+      "device": "",
+      "anydeskDeviceName": "vep-bostan-maadi@ad",
+      "deviceID": null
+    },
+	{
+      "facilityName": "Bostan Maadi Electrophysiology",
+      "investigation": "EOG",
+      "device": "",
+      "anydeskDeviceName": "vep-bostan-maadi@ad",
+      "deviceID": null
+    },
+	{
+      "facilityName": "Bostan Maadi Electrophysiology",
+      "investigation": "VEP Multi Focal",
+      "device": "",
+      "anydeskDeviceName": "vep-bostan-maadi@ad",
+      "deviceID": null
+    },
+	{
+      "facilityName": "Bostan Maadi Electrophysiology",
+      "investigation": "ERG Multi Focal",
+      "device": "",
+      "anydeskDeviceName": "vep-bostan-maadi@ad",
+      "deviceID": null
+    },
+	{
+      "facilityName": "Bostan Maadi Electrophysiology",
+      "investigation": "Sweep VEP",
+      "device": "",
+      "anydeskDeviceName": "vep-bostan-maadi@ad",
+      "deviceID": null
+    },
    ]
