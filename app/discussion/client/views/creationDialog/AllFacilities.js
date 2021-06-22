@@ -65,6 +65,16 @@ export const allFacilities = [
         {
             name: 'Bostan Maadi Electrophysiology',
             zoomLink: 'https://us05web.zoom.us/j/9294667742?pwd=NEgzd3FtTElQczB1aWRVUkZrb3NWZz09',
+			investigations:[
+				"ERG",
+				"VEP",
+				"VEP + ERG",
+				"VEP flash & pattern",
+				"EOG",
+				"VEP Multi Focal",
+				"ERG Multi Focal",
+				"Sweep VEP"
+			]
         }
         ,
         {
