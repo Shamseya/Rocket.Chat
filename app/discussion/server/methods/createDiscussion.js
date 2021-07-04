@@ -121,45 +121,49 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => 
 	} = data;
 
 
-	if (!patientName.trim() || !patientID.trim() || !patientDateOfBirth.trim()) 
-		throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Patient name/id/DOB.', {
+	if (!patientName.trim()) 
+		throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Patient name.', {
 			method: 'DiscussionCreation',
 		});
-		if(!serviceType) 
-			throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Service type.', {
-				method: 'DiscussionCreation',
-			});
+		// if (!patientName.trim() || !patientID.trim() || !patientDateOfBirth.trim()) 
+		// throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Patient name/id/DOB.', {
+		// 	method: 'DiscussionCreation',
+		// });
+		// if(!serviceType) 
+		// 	throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter Service type.', {
+		// 		method: 'DiscussionCreation',
+		// 	});
 
-		if (serviceType === "other" && !otherServiceTypeInvestigation.trim()) 
-			throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter otherServiceTypeInvestigation Not specified for service type other.', {
-				method: 'DiscussionCreation',
-			});
+		// if (serviceType === "other" && !otherServiceTypeInvestigation.trim()) 
+		// 	throw new Meteor.Error('error-invalid-arguments', 'Missing Parameter otherServiceTypeInvestigation Not specified for service type other.', {
+		// 		method: 'DiscussionCreation',
+		// 	});
 		
-		if(serviceType === "ophthalmology") {
-			if(!referringDoctor.trim() || !eye.trim() || !selectedFacility || !selectedInvestigations) 
-				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter referringDoctor/eye/selectedFacility/selectedInvestigations', {
-					method: 'DiscussionCreation',
-				});
+		// if(serviceType === "ophthalmology") {
+		// 	if(!referringDoctor.trim() || !eye.trim() || !selectedFacility || !selectedInvestigations) 
+		// 		throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter referringDoctor/eye/selectedFacility/selectedInvestigations', {
+		// 			method: 'DiscussionCreation',
+		// 		});
 
-			selectedInvestigations.forEach((inv) => {
-				if(!inv.investigation.name || !inv.device) {
-					throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter investigation Data', {
-						method: 'DiscussionCreation',
-					});
-				}
-			});
+		// 	selectedInvestigations.forEach((inv) => {
+		// 		if(!inv.investigation.name || !inv.device) {
+		// 			throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter investigation Data', {
+		// 				method: 'DiscussionCreation',
+		// 			});
+		// 		}
+		// 	});
 
-			if(!zoomRoomType.trim()) 
-				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter zoomRoomType', {
-					method: 'DiscussionCreation',
-				});
-			if(!zoomRoomLink.trim()) 
-				throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter zoomRoomLink', {
-					method: 'DiscussionCreation',
-				});
+		// 	if(!zoomRoomType.trim()) 
+		// 		throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter zoomRoomType', {
+		// 			method: 'DiscussionCreation',
+		// 		});
+		// 	if(!zoomRoomLink.trim()) 
+		// 		throw new Meteor.Error('error-invalid-arguments', 'Reffering.', 'Missing Parameter zoomRoomLink', {
+		// 			method: 'DiscussionCreation',
+		// 		});
 
-		}
-
+		// }
+		
 	/// End Patient Data Validation
 
 
@@ -170,7 +174,7 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => 
 
 	const type = roomTypes.getConfig(p_room.t).getDiscussionType();
 	const description = p_room.encrypted ? '' : message.msg;
-	const topic = p_room.name;
+	const topic = p_room?.name;
 
 	const discussion = createRoom(type, name, user.username, [...new Set(invitedUsers)], false, {
 		fname: t_name,
@@ -201,34 +205,33 @@ const create = ({ prid, pmid, t_name, reply, users, user, encrypted, data }) => 
 		sendMessage(user, { msg: reply }, discussion);
 	}
 
-	
 	// send all of the ticket's data to the newly created discussion
-	let zoomRoomLinkHere = "[here]("+data.zoomRoomLink.trim()+")";
-	let date = data.patientDateOfBirth.split('-');
+	let zoomRoomLinkHere = "[here]("+data.zoomRoomLink?.trim()+")";
+	let date = data.patientDateOfBirth?.split('-');
 	let ticketData = "";
-	ticketData += `Patient Name: *${data.patientName}* \n`;
-	ticketData += `Patient ID: *${data.patientID}* \n`;
-	ticketData += `DOB: *${date[2]}/${date[1]}/${date[0]}* \n`;
+	if(data.patientName) ticketData += `Patient Name: *${data.patientName}* \n`;
+	if(data.patientID) ticketData += `Patient ID: *${data.patientID}* \n`;
+	if(data.patientDateOfBirth) ticketData += `DOB: *${date[2]}/${date[1]}/${date[0]}* \n`;
 	if(data.serviceType === 'ophthalmology') {
-		ticketData += `Referred By: *Dr ${data.referringDoctor}* \n`;
-		ticketData += `Eyes: *${data.eye}* \n`;
-		ticketData += `Facility: *${data.selectedFacility.name}* \n`;
+		if(data.referringDoctor) ticketData += `Referred By: *Dr ${data.referringDoctor}* \n`;
+		if(data.eye) ticketData += `Eyes: *${data.eye}* \n`;
+		if(data.selectedFacility) ticketData += `Facility: *${data.selectedFacility?.name}* \n`;
 	}
-	ticketData += `Technician/Specialist: *${invitedUsers}* \n\n`;
+	if(invitedUsers.length && users.length) ticketData += `Technician/Specialist: *${invitedUsers}* \n\n`;
 	
 	selectedInvestigations.forEach((inv) => {
-		ticketData += `Investigation: *${inv.investigation.name}* \n`;
-		ticketData += `Anydesk Device Name: *${inv.device}* \n\n`;
+		if(inv.investigation?.name) ticketData += `Investigation: *${inv.investigation?.name}* \n`;
+		if(inv.device) ticketData += `Anydesk Device Name: *${inv.device}* \n\n`;
 	});
 
 	if(data.serviceType === 'ophthalmology') {
-		ticketData += `Talk to the local specialist ${zoomRoomLinkHere} \n`;
+		if(data.zoomRoomLink) ticketData += `Talk to the local specialist ${zoomRoomLinkHere} \n`;
 
 	}
 	if(data.serviceType === 'other') {
 		ticketData += `Service Type Investigation *${otherServiceTypeInvestigation}*`;
 	}
-	
+
 	sendMessage(user, { msg: ticketData }, discussion);
 	return discussion;
 };

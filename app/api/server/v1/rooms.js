@@ -235,9 +235,10 @@ API.v1.addRoute('rooms.leave', { authRequired: true }, {
 API.v1.addRoute('rooms.createDiscussion', { authRequired: true }, {
 	post() {
 		const { prid, pmid, reply, t_name, users, encrypted, data } = this.bodyParams;
-		if (!prid) {
-			return API.v1.failure('Body parameter "prid" is required.');
-		}
+		console.log(data)
+		// if (!prid) {
+		// 	return API.v1.failure('Body parameter "prid" is required.');
+		// }
 		if (!t_name) {
 			return API.v1.failure('Body parameter "t_name" is required.');
 		}

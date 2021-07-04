@@ -49,38 +49,38 @@ Template.CreateDiscussion.helpers({
 			customZoomRoomLink, 
 			selectedUsers
 		} = Template.instance();
-		if (!parentChannel.get()  || !selectedUsers.get().length) return 'disabled';
+		// if (!parentChannel.get()  || !selectedUsers.get()?.length) return 'disabled';
 		// Basic Custom Data
-		if (!patientName.get().trim() || !patientID.get().trim() || !patientDateOfBirth.get().trim()) return 'disabled';
+		if (!patientName.get()?.trim() /*|| !patientID.get()?.trim() || !patientDateOfBirth.get()?.trim()*/) return 'disabled';
 
 
-		////// Serice Type not set
-		if(!serviceType.get()) return 'disabled';
+		// ////// Serice Type not set
+		// if(!serviceType.get()) return 'disabled';
 
-		// Service Type is other && custom Innvestigation => Correct
-		if (serviceType.get() === "other") {
-			if(otherServiceTypeInvestigation.get().trim()) {
-				return '';
-			} else {
-				return 'disabled';
-			}
-		}
-		////// Service Type is ophthalmology
-		// Basic ophthalmology fields
-		if(!referringDoctor.get().trim() || !eye.get().trim() || !selectedFacility.get() || !selectedInvestigations.get().length === 0) return 'disabled';
+		// // Service Type is other && custom Innvestigation => Correct
+		// if (serviceType.get() === "other") {
+		// 	if(otherServiceTypeInvestigation.get()?.trim()) {
+		// 		return '';
+		// 	} else {
+		// 		return 'disabled';
+		// 	}
+		// }
+		// ////// Service Type is ophthalmology
+		// // Basic ophthalmology fields
+		// if(!referringDoctor.get()?.trim() || !eye.get()?.trim() || !selectedFacility.get() || !selectedInvestigations.get()?.length === 0) return 'disabled';
 
-		selectedInvestigations.get().forEach((inv) => {
-			if(!inv.investigation.name || !inv.device) {
-				return 'disabled'
-			}
-		});
+		// selectedInvestigations.get()?.forEach((inv) => {
+		// 	if(!inv.investigation.name || !inv.device) {
+		// 		return 'disabled'
+		// 	}
+		// });
 
-		//// Zoon Room type is set
-		if(!zoomRoomType.get()) return 'disabled';
-		// Zoom room type is standard, facility's zoomlink
-		if(zoomRoomType.get().trim() === "standard" && !selectedFacility.get().zoomLink?.trim()) return 'disabled';
-		// Zoom room type is custom, custom zoomlink
-		if(zoomRoomType.get().trim() === "custom" && !customZoomRoomLink.get()?.trim()) return 'disabled';
+		// //// Zoon Room type is set
+		// if(!zoomRoomType.get()) return 'disabled';
+		// // Zoom room type is standard, facility's zoomlink
+		// if(zoomRoomType.get()?.trim() === "standard" && !selectedFacility.get()?.zoomLink?.trim()) return 'disabled';
+		// // Zoom room type is custom, custom zoomlink
+		// if(zoomRoomType.get()?.trim() === "custom" && !customZoomRoomLink.get()?.trim()) return 'disabled';
 
 
 		// // All pass => Correct
@@ -93,7 +93,7 @@ Template.CreateDiscussion.helpers({
 	selectedUsers() {
 		const myUsername = Meteor.user().username;
 		const { message } = this;
-		const users = Template.instance().selectedUsers.get().map((e) => e);
+		const users = Template.instance().selectedUsers.get()?.map((e) => e);
 		if (message) {
 			users.unshift(message.u);
 		}
@@ -167,7 +167,7 @@ Template.CreateDiscussion.helpers({
 		return Template.instance().investigations.get();
 	},
 	isOnlyInesvtigation() {
-		return Template.instance().selectedInvestigations.get().length === 1;
+		return Template.instance().selectedInvestigations.get()?.length === 1;
 	},
 	selectedInvestigations() {
 		return Template.instance().selectedInvestigations.get();
@@ -227,9 +227,9 @@ Template.CreateDiscussion.events({
 		let investigation = t.investigations.curValue.find(investigation => investigation.name === e.target.value);
 		let newInvestigations = [...t.selectedInvestigations.get()];
 		newInvestigations[parseInt(e.target.name)].investigation = investigation;
-		let automaticAnyDesk = Template.instance().devices.get().find
+		let automaticAnyDesk = Template.instance().devices.get()?.find
 			(
-				device => device.facilityName === Template.instance().selectedFacility.get().name &&
+				device => device.facilityName === Template.instance().selectedFacility.get()?.name &&
 				device.investigation === newInvestigations[e.target.name].investigation.name
 			)
 		newInvestigations[parseInt(e.target.name)].device = automaticAnyDesk.anydeskDeviceName;			
@@ -246,9 +246,9 @@ Template.CreateDiscussion.events({
 		let newInvestigations = [...t.selectedInvestigations.get()];
 		if(e.target.value === 'automatic') {
 
-			let automaticAnyDesk = Template.instance().devices.get().find
+			let automaticAnyDesk = Template.instance().devices.get()?.find
 			(
-				device => device.facilityName === Template.instance().selectedFacility.get().name &&
+				device => device.facilityName === Template.instance().selectedFacility.get()?.name &&
 				device.investigation === newInvestigations[e.target.name].investigation.name
 			)
 			newInvestigations[parseInt(e.target.name)].device = automaticAnyDesk.anydeskDeviceName;
@@ -294,7 +294,7 @@ Template.CreateDiscussion.events({
 
 		const { pmid } = instance;
 		const t_name = instance.patientName.get();
-		const users = instance.selectedUsers.get().map(({ username }) => username).filter((value, index, self) => self.indexOf(value) === index);
+		const users = instance.selectedUsers.get()?.map(({ username }) => username).filter((value, index, self) => self.indexOf(value) === index);
 		const encrypted = instance.encrypted.get();
 
 		const prid = instance.parentChannelId.get();
@@ -317,7 +317,7 @@ Template.CreateDiscussion.events({
 			data.selectedInvestigations = selectedInvestigations.get();
 			data.zoomRoomType = zoomRoomType.get();
 			if(zoomRoomType.get() === "standard") {
-				data.zoomRoomLink = instance.selectedFacility.get().zoomLink;
+				data.zoomRoomLink = instance.selectedFacility.get()?.zoomLink;
 			}
 			else {
 				data.zoomRoomLink = instance.customZoomRoomLink.get();
@@ -430,7 +430,7 @@ Template.CreateDiscussion.onCreated(function() {
 		}
 	};
 	this.onClickTagUser = ({ username }) => {
-		this.selectedUsers.set(this.selectedUsers.get().filter((user) => user.username !== username));
+		this.selectedUsers.set(this.selectedUsers.get()?.filter((user) => user.username !== username));
 	};
 	this.deleteLastItemUser = () => {
 		const arr = this.selectedUsers.get();
